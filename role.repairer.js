@@ -5,11 +5,11 @@ var roleRepairer = {
 
 	    if (creep.memory.building && creep.carry.energy == 0) {
             creep.memory.building = false;
-            creep.say("ð harvest");
+            creep.say("⛏️ harvest");
 	    }
 	    if (!creep.memory.building && creep.carry.energy == creep.carryCapacity) {
 	        creep.memory.building = true;
-	        creep.say("ð§ Repair");
+	        creep.say("🔧 Repair");
 	    }
 
 	    if(creep.memory.building) {

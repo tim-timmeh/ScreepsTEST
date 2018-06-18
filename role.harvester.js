@@ -3,14 +3,14 @@ var roleHarvester = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
-        
+
         if (creep.memory.building && creep.carry.energy == 0) {
             creep.memory.building = false;
-            creep.say("ð harvest");
+            creep.say("⛏️ harvest");
         }
         if (!creep.memory.building && creep.carry.energy == creep.carryCapacity) {
             creep.memory.building = true;
-            creep.say("ð§ Storage");
+            creep.say("📦 Storage");
         }
 
         if(!creep.memory.building) {
