@@ -4,7 +4,6 @@ var roleBuilder = require("role.builder");
 var roleRepairer = require("role.repairer");
 var roleTower = require("role.tower");
 //var roleMiner = require("role.miner");
-//TEsttest
 
 module.exports.loop = function () {
 
