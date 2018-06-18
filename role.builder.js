@@ -9,7 +9,7 @@ var roleBuilder = {
 	    }
 	    if (!creep.memory.building && creep.carry.energy == creep.carryCapacity) {
 	        creep.memory.building = true;
-	        creep.say("🔨 Build");
+	        creep.say("'\ud83d\udd28' Build");
 	    }
 
 	    if(creep.memory.building) {

@@ -9,7 +9,7 @@ var roleRepairer = {
 	    }
 	    if (!creep.memory.building && creep.carry.energy == creep.carryCapacity) {
 	        creep.memory.building = true;
-	        creep.say("🔧 Repair");
+	        creep.say("'\ud83d\udd27' Repair");
 	    }
 
 	    if(creep.memory.building) {

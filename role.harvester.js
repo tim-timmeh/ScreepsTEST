@@ -10,7 +10,7 @@ var roleHarvester = {
         }
         if (!creep.memory.building && creep.carry.energy == creep.carryCapacity) {
             creep.memory.building = true;
-            creep.say("📦 Storage");
+            creep.say("'\ud83d\udce6' Storage");
         }
 
         if(!creep.memory.building) {
