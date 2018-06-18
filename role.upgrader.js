@@ -5,11 +5,11 @@ var roleUpgrader = {
 
         if (creep.memory.building && creep.carry.energy == 0) {
             creep.memory.building = false;
-            creep.say("⛏️ harvest");
+            creep.say("'\u26CF' harvest");
         }
         if (!creep.memory.building && creep.carry.energy == creep.carryCapacity) {
             creep.memory.building = true;
-            creep.say("💎 Upgrade");
+            creep.say("'\uD83D\uDC8E' Upgrade");
         }
 
         if (!creep.memory.building) {

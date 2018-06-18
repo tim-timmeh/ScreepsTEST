@@ -5,7 +5,7 @@ var roleBuilder = {
 
 	    if (creep.memory.building && creep.carry.energy == 0) {
             creep.memory.building = false;
-            creep.say("⛏️ harvest");
+            creep.say("'\u26CF' harvest");
 	    }
 	    if (!creep.memory.building && creep.carry.energy == creep.carryCapacity) {
 	        creep.memory.building = true;
