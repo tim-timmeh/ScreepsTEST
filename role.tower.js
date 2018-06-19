@@ -10,7 +10,7 @@ var roleTower = {
 			tower.attack(enemy);
 		} else if (targetsMyRepair) {
 			tower.repair(targetsMyRepair)
-		} else if (targetsRepair && tower.energy > (tower.energyCapacity / 2)) {
+		} else if (targetsRepair && tower.energy > (tower.energyCapacity * 0.75)) {
 			tower.repair(targetsRepair)
 		}
 	}
