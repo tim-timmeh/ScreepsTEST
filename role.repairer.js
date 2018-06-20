@@ -5,11 +5,11 @@ var roleRepairer = {
 
 	    if (creep.memory.building && creep.carry.energy == 0) {
             creep.memory.building = false;
-            creep.say("ð harvest");
+            creep.say("\u26CF harvest");
 	    }
 	    if (!creep.memory.building && creep.carry.energy == creep.carryCapacity) {
 	        creep.memory.building = true;
-	        creep.say("ð§ Repair");
+	        creep.say("\ud83d\udd27 Repair");
 	    }
 
 	    if(creep.memory.building) {
@@ -17,7 +17,7 @@ var roleRepairer = {
 	        //console.log("Repairing: " + targetsRepair + " - " + targetsRepair.hits + "/" + targetsRepair.hitsMax)
             if (targetsRepair) {
                 if (creep.repair(targetsRepair) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(targetsRepair, {visualizePathStyle: {stroke: "#ffffff"}});
+                    creep.moveTo(targetsRepair, {visualizePathStyle: {stroke: "#fff"}});
                 }
             }
 	    }
@@ -25,7 +25,7 @@ var roleRepairer = {
 	        // **Change to find closest energy
 	        var sources = creep.pos.findClosestByPath(FIND_SOURCES);
             if(creep.harvest(sources) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(sources, {visualizePathStyle: {stroke: '#ffaa00'}});
+                creep.moveTo(sources, {visualizePathStyle: {stroke: '#fa0'}});
             }
 	    }
 	}
