@@ -1,4 +1,4 @@
-//++ Target creeps without tough first?
+//* Target creeps without tough first?
 
 var roleTower = {
 
@@ -12,8 +12,10 @@ var roleTower = {
 		if (enemy) {
 			console.log("Enemy Found, \ud83d\udd2b Attacking " + enemy);
 			tower.attack(enemy);
-		} else if (targetsMyRepair) {
+		// Repair my structures above 50% energy
+		} else if (targetsMyRepair && tower.energy > (tower.energyCapacity * 0.5)) {
 			tower.repair(targetsMyRepair)
+		// Repair all structures above 75% energy
 		} else if (targetsRepairLowestHp && tower.energy > (tower.energyCapacity * 0.75)) {
 			tower.repair(targetsRepairLowestHp[0])
 		}
