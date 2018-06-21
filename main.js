@@ -8,9 +8,10 @@ var roleTower = require("role.tower");
 module.exports.loop = function () {
 
     // *TODO*
+    // ** Change AI modules into 1 function with function(creep,role)
     // ** Change priority repair/build > harvester > upgrader on all.
     // ** If harvester = 0 then build WORK,CARRY,MOVE (if all hell breaks loose start from start)
-    // ** Tower Logic
+    // ** If creep.pos no road then build construction_site road
     // ** Dedicated Miner dumps to container.
     // ** Incorperate container Production line miner/hauler/builder etc (instead of universal creeps) (Link?)
     // ** Nearest source if error second source
