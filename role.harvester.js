@@ -39,6 +39,7 @@ var roleHarvester = {
                     creep.moveTo(targets[0], {visualizePathStyle: {stroke: "#fff"}});
                 }
             } else if (targetsT.length > 0) {
+                targetsT.sort((a,b) => a.energy - b.energy)
                 if(creep.transfer(targetsT[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(targetsT[0], {visualizePathStyle: {stroke: "#fff"}});
                 }
