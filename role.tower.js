@@ -1,3 +1,4 @@
+"use strict"
 //* Target creeps without tough first?
 
 var roleTower = {

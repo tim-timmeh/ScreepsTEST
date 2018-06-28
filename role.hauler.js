@@ -1,13 +1,13 @@
 "use strict"
 var roleUpgrader = require("role.upgrader");
-var roleHarvester = {
+var roleHauler = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
 
         if (creep.memory.building && creep.carry.energy == 0) {
             creep.memory.building = false;
-            creep.say("\u26CF harvest");
+            creep.say("\u26CF hauling");
         }
         if (!creep.memory.building && creep.carry.energy == creep.carryCapacity) {
             creep.memory.building = true;
@@ -16,8 +16,9 @@ var roleHarvester = {
 
         if(!creep.memory.building) {
             // **Change to find closest energy
-            var sources = creep.pos.findClosestByPath(FIND_SOURCES);
-            if(creep.harvest(sources) == ERR_NOT_IN_RANGE) {
+            var sources = creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: (s) => { return (s.structureType == STRUCTURE_CONTAINER) } });
+            console.log(creep.withdraw(sources, RESOURCE_ENERGY))
+            if(creep.withdraw(sources, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(sources, {visualizePathStyle: {stroke: '#fa0'}});
             }
         }
@@ -50,4 +51,4 @@ var roleHarvester = {
     }
 };
 
-module.exports = roleHarvester;
+module.exports = roleHauler;
