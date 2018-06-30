@@ -10,13 +10,15 @@ var roleHauler = require("role.hauler");
 module.exports.loop = function () {
 
   // *TODO*
+  // ** Update all creeps to pull form containers not sources
   // ** Change AI modules into 1 function with function(creep,role)
   // ** Change priority repair/build > harvester > upgrader on all.
   // ** If harvester = 0 then build WORK,CARRY,MOVE (if all hell breaks loose start from start)
   // ** Dedicated Miner dumps to container.
   // ** Incorperate container Production line miner/hauler/builder etc (instead of universal creeps) (Link?)
   // ** Nearest source if error second source
-
+  // ** .serializePath && .deserializePath - if memory false -> Do findClosestByPath -> serialize to memory ->
+  //                                        creep.move via memory -> at error || end = clear memory
 
   // Clear memory of old creeps.
   for (var name in Memory.creeps) {
@@ -35,25 +37,51 @@ module.exports.loop = function () {
   var builders = _.filter(Game.creeps, (creep) => creep.memory.role == "builder");
   var miners = _.filter(Game.creeps, (creep) => creep.memory.role == "miner");
   var newName;
+  var roomSources = Game.spawns.Spawn1.room.find(FIND_SOURCES)
   // Check role array, spawn if below specified count.
-  if (harvesters.length < 4) {
+  if (miners.length + builders.length + harvesters.length + repairers.length + upgraders.length == 0) {
+    //console.log("Harvesters: " + harvesters.length);
+    //if (harvesters.length == 0) {
     newName = "Emergency Harvester" + Game.time;
-    console.log("Harvesters: " + harvesters.length);
-    console.log("Spawning new  Emergency harvester: " + newName);
-    if (harvesters.length == 0) {
-      console.log("WARNING: SPAWNING EMERGENCY CREEP");
-      Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, MOVE], newName, {
-        memory: {
-          role: "harvester"
-        }
-      });
-    } else {
+    console.log("WARNING: SPAWNING EMERGENCY CREEP");
+    Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, MOVE], newName, {
+      memory: {
+        role: "harvester"
+      }
+    });
+    /*} else {
+      newName = "Harvester" + Game.time;
+      console.log("Spawning new harvester: " + newName);
       Game.spawns["Spawn1"].spawnCreep([WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], newName, {
         memory: {
           role: "harvester"
         }
       });
+    }*/
+    // Old harvester setup
+  } else if (miners.length < roomSources.length) {
+    //console.log(Game.spawns.Spawn1.room.find(FIND_SOURCES))
+    for (let source of roomSources) {
+      //console.log(_.filter(Game.creeps, (creep) => creep.memory.minerSource))
+      console.log("Search creeps > source = minerSource : " + _.filter(Game.creeps, (creep) => creep.memory.minerSource == source.id));
+      let filteredCreep = _.filter(Game.creeps, (creep) => creep.memory.minerSource == source.id);
+      //if (_.filter(Game.creeps, (creep) => creep.memory.minerSource == source.id)) {
+      if (filteredCreep != "") {
+        console.log("This source has creep" + source)
+        continue;
+      } else {
+        console.log("This source has no creep" + source)
+        newName = "Miner" + Game.time;
+        console.log("Spawning new miner: " + newName);
+        Game.spawns["Spawn1"].spawnCreep([WORK, CARRY, MOVE], newName, {
+          memory: {
+            role: "miner",
+            minerSource: source.id
+          }
+        });
+      }
     }
+
   } else if (upgraders.length < 1) {
     newName = "Upgrader" + Game.time;
     console.log("Upgraders: " + upgraders.length);
@@ -81,7 +109,7 @@ module.exports.loop = function () {
         role: "builder"
       }
     });
-  } else if (miners.length < 2) {
+  } /*else if (miners.length < 2) {
     newName = "Miner" + Game.time;
     console.log("Miners: " + miners.length);
     console.log("Spawning new miner: " + newName);
@@ -90,7 +118,7 @@ module.exports.loop = function () {
         role: "miner"
       }
     });
-  }
+  }*/
   // Spawn1 Spawning dialog.
   if (Game.spawns["Spawn1"].spawning) {
     var spawningCreep = Game.creeps[Game.spawns["Spawn1"].spawning.name];

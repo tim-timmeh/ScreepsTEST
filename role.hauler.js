@@ -17,7 +17,6 @@ var roleHauler = {
         if(!creep.memory.building) {
             // **Change to find closest energy
             var sources = creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: (s) => { return (s.structureType == STRUCTURE_CONTAINER) } });
-            console.log(creep.withdraw(sources, RESOURCE_ENERGY))
             if(creep.withdraw(sources, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(sources, {visualizePathStyle: {stroke: '#fa0'}});
             }
