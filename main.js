@@ -39,7 +39,7 @@ module.exports.loop = function () {
   var newName;
 
   // Check role array, spawn if below specified count.
-  if (miners.length + builders.length + harvesters.length + repairers.length + upgraders.length == 0) {
+  if (miners.length + harvesters.length == 0) {
     // - console.log("Harvesters: " + harvesters.length);
     // - if (harvesters.length == 0) {
     newName = "Emergency Harvester" + Game.time;
@@ -60,7 +60,7 @@ module.exports.loop = function () {
       });
     }*/
 
-  } else if (miners.length < roomSources.length) {
+  } else if (miners.length < roomSources.length && miners.length <= haulers.length) {
     for (var source of roomSources) {
       console.log("Search creeps > source = minerSource : " + _.filter(Game.creeps, (creep) => creep.memory.minerSource == source.id));
       let filteredCreep = _.filter(Game.creeps, (creep) => creep.memory.minerSource == source.id);
@@ -71,7 +71,7 @@ module.exports.loop = function () {
         console.log("This source has no creep" + source);
         newName = "Miner" + Game.time;
         console.log("Spawning new miner: " + newName);
-        Game.spawns["Spawn1"].spawnCreep([WORK, WORK, WORK, WORK, WORK, CARRY, MOVE], newName, {
+        Game.spawns["Spawn1"].spawnCreep([WORK, WORK, CARRY, MOVE], newName, {
           memory: {
             role: "miner",
             minerSource: source.id
@@ -89,13 +89,12 @@ module.exports.loop = function () {
       }
     })*/
 
-  } else if (haulers.length < roomSources.length) {
-    console.log("Test memory.containers: " + Memory.containers);
+  } else if (haulers.length < Memory.containers.length) {
     for (var container of Memory.containers) {
       if (_.filter(Game.creeps, (creep) => creep.memory.role == "hauler" && creep.memory.haulerSource == container) == "") {
         newName = "Hauler" + Game.time;
         console.log("Haulers: " + haulers.length + "\nSpawning new hauler: " + newName + "\nFor container : " + container);
-        Game.spawns["Spawn1"].spawnCreep([WORK, CARRY, CARRY , CARRY, MOVE, MOVE], newName, {
+        Game.spawns["Spawn1"].spawnCreep([WORK, CARRY, MOVE, MOVE], newName, {
           memory : {
             role : "hauler",
             haulerSource : container
@@ -173,8 +172,8 @@ module.exports.loop = function () {
 
   // Creep AI
   for (var name in Game.creeps) {
-    var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
     var creep = Game.creeps[name];
+    var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
     if (creep.memory.role == "harvester") {
       roleHarvester.run(creep);
     }
