@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 var roleUpgrader = require("role.upgrader");
 var roleHauler = {
 
@@ -7,7 +7,7 @@ var roleHauler = {
 
         if (creep.memory.building && creep.carry.energy == 0) {
             creep.memory.building = false;
-            creep.say("\u26CF hauling");
+            creep.say("\ud83d\udc50 Hauling");
         }
         if (!creep.memory.building && creep.carry.energy == creep.carryCapacity) {
             creep.memory.building = true;
@@ -15,25 +15,25 @@ var roleHauler = {
         }
 
         if(!creep.memory.building) {
-            // **Change to find closest energy
-            var sources = creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: (s) => { return (s.structureType == STRUCTURE_CONTAINER) } });
-            if(creep.withdraw(sources, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(sources, {visualizePathStyle: {stroke: '#fa0'}});
+            //var sources = creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: (s) => { return (s.structureType == STRUCTURE_CONTAINER) } });
+            var haulerSource = Game.getObjectById(creep.memory.haulerSource);
+            if(creep.withdraw(haulerSource, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(haulerSource, {visualizePathStyle: {stroke: '#fa0'}});
             }
         }
         else {
             var targets = creep.room.find(FIND_STRUCTURES, {
-                    filter: (structure) => {
-                        return (structure.structureType == STRUCTURE_EXTENSION || structure.structureType == STRUCTURE_SPAWN) &&
-                            structure.energy < structure.energyCapacity;
+                    filter: (s) => {
+                        return (s.structureType == STRUCTURE_EXTENSION || s.structureType == STRUCTURE_SPAWN) &&
+                            s.energy < s.energyCapacity;
                     }
             });
 
             var targetsT = creep.room.find(FIND_STRUCTURES, {
-                filter: (structure) => {
-                    return (structure.structureType == STRUCTURE_TOWER) && structure.energy < structure.energyCapacity;
+                filter: (s) => {
+                    return (s.structureType == STRUCTURE_TOWER) && s.energy < s.energyCapacity;
                 }
-            })
+            });
 
             if(targets.length > 0) {
                 if(creep.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
@@ -44,7 +44,7 @@ var roleHauler = {
                     creep.moveTo(targetsT[0], {visualizePathStyle: {stroke: "#fff"}});
                 }
             } else {
-                roleUpgrader.run(creep)
+                roleUpgrader.run(creep);
             }
         }
     }
