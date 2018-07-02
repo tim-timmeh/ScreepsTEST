@@ -22,15 +22,15 @@ var roleRepairer = {
               }
           })
 	        //console.log("Repairing: " + targetsRepair + " - " + targetsRepair.hits + "/" + targetsRepair.hitsMax)
-            if (targetsRepair) {
-                if (creep.repair(targetsRepair) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(targetsRepair, {visualizePathStyle: {stroke: "#fff"}});
-                }
-            } else if (targetsT.length > 0) {
+            if (targetsT.length > 0) {
                 targetsT.sort((a,b) => a.energy - b.energy)
                 if(creep.transfer(targetsT[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(targetsT[0], {visualizePathStyle: {stroke: "#fff"}});
-                }
+                };		    
+            } else if (targetsRepair) {
+                if (creep.repair(targetsRepair) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(targetsRepair, {visualizePathStyle: {stroke: "#fff"}});
+                };
             } else {
               roleBuilder.run(creep);        // Next role
             }
