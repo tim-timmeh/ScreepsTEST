@@ -1,9 +1,9 @@
 "use strict"
+var roleUpgrader = require("role.upgrader");
 var roleBuilder = {
 
   /** @param {Creep} creep **/
   run: function(creep) {
-    console.log("what");
     if (creep.memory.building && creep.carry.energy == 0) {
       creep.memory.building = false;
       creep.say("\u26CF harvest")
@@ -20,11 +20,12 @@ var roleBuilder = {
         if (creep.build(targets) == ERR_NOT_IN_RANGE) {
           creep.moveTo(targets, {visualizePathStyle: {stroke: "#fff"}});
         }
+      } else {
+        roleUpgrader.run(creep)        // Next role
       }
     }
     else {
       // **Change to find closest energy
-      console.log("testm");
       var sources = creep.pos.findClosestByPath(FIND_SOURCES);
       var targetsS = creep.room.find(FIND_MY_STRUCTURES, {
           filter: (s) => {
@@ -37,7 +38,6 @@ var roleBuilder = {
         }  // **Change to find closest energy
       } else if(creep.harvest(sources) == ERR_NOT_IN_RANGE) {
         creep.moveTo(sources, {visualizePathStyle: {stroke: '#fa0'}});
-        console.log(what)
         }
       }
     }
