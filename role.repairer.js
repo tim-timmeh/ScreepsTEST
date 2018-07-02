@@ -15,7 +15,7 @@ var roleRepairer = {
 	    }
 
 	    if(creep.memory.building) {
-	        var targetsRepair = creep.pos.findClosestByPath(FIND_STRUCTURES, {filter : (hp) => hp.hits < (hp.hitsMax - 500) && hp.hits < 30000000});
+	        var targetsRepair = creep.pos.findClosestByPath(FIND_STRUCTURES, {filter : (hp) => hp.hits < (hp.hitsMax - 500) && hp.hits < 90000000});
           var targetsT = creep.room.find(FIND_STRUCTURES, {
               filter: (structure) => {
                   return (structure.structureType == STRUCTURE_TOWER) && structure.energy < structure.energyCapacity;
