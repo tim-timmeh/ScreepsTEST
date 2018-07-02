@@ -1,9 +1,14 @@
+"use strict"
+/*
+ for range miners - container underneath? mine : construction underneath ? energy at 50 ? continue construction : mine : build container;
+*/
 var roleMiner = {
 
-	run: function(creep) {
-		var sources = creep.pos.find(FIND_SOURCES);
-            if(creep.harvest(sources[0]) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(sources[0], {visualizePathStyle: {stroke: '#fa0'}});
-            }
-	}
+  run: function (creep) {
+    let source = Game.getObjectById(creep.memory.minerSource)
+		if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
+      creep.moveTo(source, {visualizePathStyle: {stroke: '#fa0'}});
+	  }
+  }
 }
+module.exports = roleMiner;
