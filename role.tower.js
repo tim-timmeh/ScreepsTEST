@@ -8,7 +8,7 @@ var roleTower = {
 		var targetsMyRepair = tower.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter : (hp) => hp.hits < (hp.hitsMax - 800)});
  		//--var targetsRepair = tower.pos.findClosestByPath(FIND_STRUCTURES, {filter : (hp) => hp.hits < hp.hitsMax})
 		// get all damaged structures and list from lowest hits
-		var targetsRepairLowestHp = tower.room.find(FIND_STRUCTURES, {filter : (hp) => hp.hits < (hp.hitsMax - 800) && hp.hits < 30000000});
+		var targetsRepairLowestHp = tower.room.find(FIND_STRUCTURES, {filter : (hp) => hp.hits < (hp.hitsMax - 800) && hp.hits < 90000000});
 		var targetsCreepRepair = _.filter(Game.creeps, (creep) => creep.hits < creep.hitsMax);
 		targetsRepairLowestHp.sort((a,b) => a.hits - b.hits);
 		if (enemy) {
