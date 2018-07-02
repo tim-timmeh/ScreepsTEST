@@ -11,6 +11,9 @@ var roleButler = require("role.butler");
 module.exports.loop = function () {
 
   /*TODO*
+  ** Change storage for creeps .findNearest
+  ** Butler get from storage > container > source
+   * while above ~50% storage spawn super || multiple upgraders?
    * spawn hauler with carry parts = ((pathfinder(container,storage).cost x 2) x 10) / 50
    * find resource(not in mem), add to mem, if hauler.xy close to mem.xy & !carryCapacity, pickup, continue
    * breakup main into different modules (spawner etc)
@@ -106,7 +109,7 @@ module.exports.loop = function () {
   } else if (upgraders.length < 1) {
     newName = "Upgrader" + Game.time;
     console.log("Upgraders: " + upgraders.length + "\nSpawning new upgrader: " + newName);
-    Game.spawns["Spawn1"].spawnCreep([WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], newName, {
+    Game.spawns["Spawn1"].spawnCreep([WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE], newName, {
       memory: {
         role: "upgrader"
       }
