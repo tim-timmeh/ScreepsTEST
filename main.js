@@ -6,11 +6,13 @@ var roleRepairer = require("role.repairer");
 var roleTower = require("role.tower");
 var roleMiner = require("role.miner");
 var roleHauler = require("role.hauler");
+var roleButler = require("role.butler");
 
 module.exports.loop = function () {
 
   /*TODO*
-   ** Update all creeps to pull from containers not sources
+   * spawn hauler with carry parts = ((pathfinder(container,storage).cost x 2) x 10) / 50
+   * find resource(not in mem), add to mem, if hauler.xy close to mem.xy & !carryCapacity, pickup, continue
    * breakup main into different modules (spawner etc)
    * Optimise vars to .deserialize from memory if possible, if not do find then .serialize to memory.
    * .serializePath && .deserializePath - if memory false -> Do findClosestByPath -> serialize to memory ->
@@ -34,19 +36,20 @@ module.exports.loop = function () {
   var builders = _.filter(Game.creeps, (creep) => creep.memory.role == "builder");
   var miners = _.filter(Game.creeps, (creep) => creep.memory.role == "miner");
   var haulers = _.filter(Game.creeps, (creep) => creep.memory.role == "hauler");
+  var butlers = _.filter(Game.creeps, (creep) => creep.memory.role == "butler");
   var roomSources = Game.spawns.Spawn1.room.find(FIND_SOURCES);
   //var roomContainers = Game.spawns.Spawn1.room.find(FIND_STRUCTURES, { filter : { structureType : STRUCTURE_CONTAINER }});
   var newName;
 
   // Check role array, spawn if below specified count.
-  if (miners.length + harvesters.length == 0) {
+  if (butlers.length == 0) {
     // - console.log("Harvesters: " + harvesters.length);
     // - if (harvesters.length == 0) {
-    newName = "Emergency Harvester" + Game.time;
-    console.log("WARNING: SPAWNING EMERGENCY CREEP");
+    newName = "Butler" + Game.time;
+    console.log("Spawning new butler: " + newName);
     Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, MOVE], newName, {
       memory: {
-        role: "harvester"
+        role: "butler"
       }
     });
     // -- Old harvester setup
@@ -62,16 +65,13 @@ module.exports.loop = function () {
 
   } else if (miners.length < roomSources.length && miners.length <= haulers.length) {
     for (var source of roomSources) {
-      console.log("Search creeps > source = minerSource : " + _.filter(Game.creeps, (creep) => creep.memory.minerSource == source.id));
       let filteredCreep = _.filter(Game.creeps, (creep) => creep.memory.minerSource == source.id);
       if (filteredCreep != "") {
-        console.log("This source has creep" + source);
         continue;
       } else {
-        console.log("This source has no creep" + source);
         newName = "Miner" + Game.time;
-        console.log("Spawning new miner: " + newName);
-        Game.spawns["Spawn1"].spawnCreep([WORK, WORK, CARRY, MOVE], newName, {
+        console.log("This source has no creep: " + source + "\nSpawning new miner: " + newName);
+        Game.spawns["Spawn1"].spawnCreep([WORK, WORK, WORK, WORK, WORK, MOVE], newName, {
           memory: {
             role: "miner",
             minerSource: source.id
@@ -88,13 +88,12 @@ module.exports.loop = function () {
         role : "hauler"
       }
     })*/
-
-  } else if (haulers.length < Memory.containers.length) {
+  } else if (Memory.containers && haulers.length < Memory.containers.length) {
     for (var container of Memory.containers) {
       if (_.filter(Game.creeps, (creep) => creep.memory.role == "hauler" && creep.memory.haulerSource == container) == "") {
         newName = "Hauler" + Game.time;
         console.log("Haulers: " + haulers.length + "\nSpawning new hauler: " + newName + "\nFor container : " + container);
-        Game.spawns["Spawn1"].spawnCreep([WORK, CARRY, MOVE, MOVE], newName, {
+        Game.spawns["Spawn1"].spawnCreep([WORK, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], newName, {
           memory : {
             role : "hauler",
             haulerSource : container
@@ -106,8 +105,7 @@ module.exports.loop = function () {
     }
   } else if (upgraders.length < 1) {
     newName = "Upgrader" + Game.time;
-    console.log("Upgraders: " + upgraders.length);
-    console.log("Spawning new upgrader: " + newName);
+    console.log("Upgraders: " + upgraders.length + "\nSpawning new upgrader: " + newName);
     Game.spawns["Spawn1"].spawnCreep([WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], newName, {
       memory: {
         role: "upgrader"
@@ -115,17 +113,15 @@ module.exports.loop = function () {
     });
   } else if (repairers.length < 1) {
     newName = "Repairer" + Game.time;
-    console.log("repairer: " + repairers.length);
-    console.log("Spawning new repairer: " + newName);
+    console.log("repairer: " + repairers.length + "\nSpawning new repairer: " + newName);
     Game.spawns["Spawn1"].spawnCreep([WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], newName, {
       memory: {
         role: "repairer"
       }
     });
-  } else if (builders.length < 2) {
+  } else if (builders.length < 1) {
     newName = "Builder" + Game.time;
-    console.log("Builders: " + builders.length);
-    console.log("Spawning new builder: " + newName);
+    console.log("Builders: " + builders.length + "\nSpawning new builder: " + newName);
     Game.spawns["Spawn1"].spawnCreep([WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], newName, {
       memory: {
         role: "builder"
@@ -174,8 +170,8 @@ module.exports.loop = function () {
   for (var name in Game.creeps) {
     var creep = Game.creeps[name];
     var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
-    if (creep.memory.role == "harvester") {
-      roleHarvester.run(creep);
+    if (creep.memory.role == "butler") {
+      roleButler.run(creep);
     }
     if (creep.memory.role == "upgrader") {
       roleUpgrader.run(creep);
@@ -184,25 +180,12 @@ module.exports.loop = function () {
       // Check for construction otherwise upgrade.
       // ** incorperate else: into module
       //var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
-      if (targets.length) {
-        roleBuilder.run(creep);
-      } else {
-        roleUpgrader.run(creep);
-      }
+      roleBuilder.run(creep);
     }
     if (creep.memory.role == "repairer") {
       // Check for repairables, then construction otherwise upgrade.
       // ** incorperate else: into module
-      var targetsRepair = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-        filter: (hp) => hp.hits < hp.hitsMax
-      });
-      if (targetsRepair) {
-        roleRepairer.run(creep);
-      } else if (targets.length) {
-        roleBuilder.run(creep);
-      } else {
-        roleUpgrader.run(creep);
-      }
+      roleRepairer.run(creep);
     }
     if (creep.memory.role == "miner") {
       roleMiner.run(creep);
