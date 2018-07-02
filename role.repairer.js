@@ -1,4 +1,5 @@
 "use strict"
+var roleBuilder = require("role.builder");
 var roleRepairer = {
 
     /** @param {Creep} creep **/
@@ -21,6 +22,8 @@ var roleRepairer = {
                 if (creep.repair(targetsRepair) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(targetsRepair, {visualizePathStyle: {stroke: "#fff"}});
                 }
+            } else {
+              roleBuilder.run(creep);        // Next role
             }
 	    }
 	    else {
