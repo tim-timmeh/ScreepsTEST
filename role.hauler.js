@@ -17,7 +17,11 @@ var roleHauler = {
         if(!creep.memory.building) {
             //var sources = creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: (s) => { return (s.structureType == STRUCTURE_CONTAINER) } });
             var haulerSource = Game.getObjectById(creep.memory.haulerSource);
-            if(creep.withdraw(haulerSource, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+            var droppedSource = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 2)
+            // for moving storage
+            if(droppedSource && creep.pickup(droppedSource) == ERR_NOT_IN_RANGE) {
+              creep.moveTo(droppedSource, {visualizePathStyle: {stroke: '#fa0'}});
+            } else if(creep.withdraw(haulerSource, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(haulerSource, {visualizePathStyle: {stroke: '#fa0'}});
             }
         }
