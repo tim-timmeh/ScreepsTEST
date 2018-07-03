@@ -122,7 +122,7 @@ module.exports.loop = function () {
         role: "repairer"
       }
     });
-  } else if (builders.length < 1) {
+  } else if (builders.length < 1 || (builders.length <= Game.spawns.Spawn1.room.find(FIND_CONSTRUCTION_SITES).length / 10)) {
     newName = "Builder" + Game.time;
     console.log("Builders: " + builders.length + "\nSpawning new builder: " + newName);
     Game.spawns["Spawn1"].spawnCreep([WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], newName, {
