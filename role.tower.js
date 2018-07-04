@@ -19,7 +19,7 @@ var roleTower = {
 	    } else if (targetsCreepRepair != "" && tower.energy > (tower.energyCapacity * 0.25)) {
 			tower.heal(targetsCreepRepair[0]);
 		// Repair my structures while above 50% energy
-	    } else if (targetsMyRepair && targetsMyRepair[0].hits < 100000 && tower.energy > (tower.energyCapacity * 0.5)) {
+	} else if (targetsMyRepair != "" && targetsMyRepair[0].hits < 100000 && tower.energy > (tower.energyCapacity * 0.5)) {
 			tower.repair(targetsMyRepair[0]);
 		} else if (targetsRepair && tower.energy > (tower.energyCapacity * 0.75)) {
 		    tower.repair(targetsRepair[0]);
