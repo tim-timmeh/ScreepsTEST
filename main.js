@@ -41,8 +41,11 @@ module.exports.loop = function () {
   var haulers = _.filter(Game.creeps, (creep) => creep.memory.role == "hauler");
   var butlers = _.filter(Game.creeps, (creep) => creep.memory.role == "butler");
   var roomSources = Game.spawns.Spawn1.room.find(FIND_SOURCES);
-  //var roomContainers = Game.spawns.Spawn1.room.find(FIND_STRUCTURES, { filter : { structureType : STRUCTURE_CONTAINER }});
+  //var roomMinerals = Game.spawns.Spawn1.room.find(FIND_MINERALS);
+  //var roomSources.push(roomMinerals)
   var newName;
+  //var roomContainers = Game.spawns.Spawn1.room.find(FIND_STRUCTURES, { filter : { structureType : STRUCTURE_CONTAINER }});
+
 
   // Check role array, spawn if below specified count.
   if (butlers.length == 0) {
