@@ -41,8 +41,8 @@ module.exports.loop = function () {
   var haulers = _.filter(Game.creeps, (creep) => creep.memory.role == "hauler");
   var butlers = _.filter(Game.creeps, (creep) => creep.memory.role == "butler");
   var roomSources = Game.spawns.Spawn1.room.find(FIND_SOURCES);
-  //var roomMinerals = Game.spawns.Spawn1.room.find(FIND_MINERALS);
-  //var roomSources.push(roomMinerals)
+  var roomMinerals = Game.spawns.Spawn1.room.find(FIND_MINERALS);
+  roomSources.push(...roomMinerals)
   var newName;
   //var roomContainers = Game.spawns.Spawn1.room.find(FIND_STRUCTURES, { filter : { structureType : STRUCTURE_CONTAINER }});
 
@@ -77,7 +77,7 @@ module.exports.loop = function () {
       } else {
         newName = "Miner" + Game.time;
         console.log("This source has no creep: " + source + "\nSpawning new miner: " + newName);
-        Game.spawns["Spawn1"].spawnCreep([WORK, WORK, WORK, WORK, WORK, MOVE], newName, {
+        Game.spawns["Spawn1"].spawnCreep([WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE], newName, {
           memory: {
             role: "miner",
             minerSource: source.id
@@ -128,7 +128,7 @@ module.exports.loop = function () {
   } else if (builders.length < 1 || (builders.length <= Game.spawns.Spawn1.room.find(FIND_CONSTRUCTION_SITES).length / 10)) {
     newName = "Builder" + Game.time;
     console.log("Builders: " + builders.length + "\nSpawning new builder: " + newName);
-    Game.spawns["Spawn1"].spawnCreep([WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], newName, {
+    Game.spawns["Spawn1"].spawnCreep([WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE], newName, {
       memory: {
         role: "builder"
       }

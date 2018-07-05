@@ -21,7 +21,7 @@ var roleHauler = {
             // for moving storage
             if(droppedSource && creep.pickup(droppedSource) == ERR_NOT_IN_RANGE) {
               creep.moveTo(droppedSource, {visualizePathStyle: {stroke: '#fa0'}});
-            } else if(creep.withdraw(haulerSource, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+            } else if(creep.withdraw(haulerSource, RESOURCE_LEMERGIUM ) == ERR_NOT_IN_RANGE || creep.withdraw(haulerSource, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(haulerSource, {visualizePathStyle: {stroke: '#fa0'}});
             }
         }
