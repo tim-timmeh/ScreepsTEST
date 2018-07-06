@@ -12,6 +12,9 @@ module.exports.loop = function () {
 
 
   /*TODO*
+  *** Check if MemoryPathing broke resource pickup from ground
+  *** Wipe old containers from memory if they die.
+  *** Check how miners are spawned and not limited by haulers as when starting miners will be more (building containers for hauler spawn)
   ** Creeps get from storage > container > source
   ** Dynamic creep size spawning
   ** Miners to place/build container and add id to memory. (Needs work part)
