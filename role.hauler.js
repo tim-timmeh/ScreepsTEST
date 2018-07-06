@@ -5,14 +5,14 @@ var roleHauler = {
     /** @param {Creep} creep **/
     run: function(creep) {
 
-        if (creep.memory.building && creep.carry.energy == 0) {
-            creep.memory.building = false;
-            creep.say("\ud83d\udc50 Collecting");
-        }
-        if (!creep.memory.building && creep.carry.energy == creep.carryCapacity) {
-            creep.memory.building = true;
-            creep.say("\ud83d\udce6 Hauling");
-        }
+      if (creep.memory.building && _.sum(creep.carry) == 0) {
+          creep.memory.building = false;
+          creep.say("\ud83d\udc50 Collecting");
+      }
+      if (!creep.memory.building && _.sum(creep.carry) == creep.carryCapacity) {
+          creep.memory.building = true;
+          creep.say("\ud83d\udce6 Hauling");
+      }
 
         if(!creep.memory.building) {
             //var sources = creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: (s) => { return (s.structureType == STRUCTURE_CONTAINER) } });
