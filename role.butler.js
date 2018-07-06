@@ -22,7 +22,7 @@ var roleButler = {
                   return (s.structureType == STRUCTURE_STORAGE);
               }
           });
-          if (targetsS && creep.room.storage.store[RESOURCE_ENERGY] > 0){
+          if (targetsS != "" && creep.room.storage.store[RESOURCE_ENERGY] > 0){
             if(creep.withdraw(targetsS[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
             creep.moveTo(targetsS[0], {visualizePathStyle: {stroke: "#fff"}});
             }  // **Change to find closest energy
@@ -31,7 +31,7 @@ var roleButler = {
             }
         }
         else {
-            var targets = creep.room.find(FIND_STRUCTURES, {
+            var targets = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                     filter: (structure) => {
                         return (structure.structureType == STRUCTURE_EXTENSION || structure.structureType == STRUCTURE_SPAWN) &&
                             structure.energy < structure.energyCapacity;
@@ -43,10 +43,9 @@ var roleButler = {
                     return (structure.structureType == STRUCTURE_TOWER) && structure.energy < structure.energyCapacity;
                 }
             })
-
-            if(targets.length > 0) {
-                if(creep.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(targets[0], {visualizePathStyle: {stroke: "#fff"}});
+            if(targets != null) {
+                if(creep.transfer(targets, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(targets, {visualizePathStyle: {stroke: "#fff"}});
                 }
             } else if (targetsT.length > 0) {
                 targetsT.sort((a,b) => a.energy - b.energy)
