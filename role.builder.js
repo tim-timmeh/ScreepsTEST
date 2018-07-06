@@ -18,10 +18,10 @@ var roleBuilder = {
 
       if (targets) {
         if (creep.build(targets) == ERR_NOT_IN_RANGE) {
-          if (creep.moveByPath(creep.memory.pathing) < 0 || !targets.pos.isEqualTo(creep.memory.pathing[creep.memory.pathing.length - 1])){
-            creep.memory.pathing = creep.pos.findPathTo(targets,{ignoreCreeps : true});
-          }
-          //creep.moveTo(targets, {visualizePathStyle: {stroke: "#fff"}});
+          //if (creep.moveByPath(creep.memory.pathing) < 0 || !targets.pos.isEqualTo(creep.memory.pathing[creep.memory.pathing.length - 1])){
+          //  creep.memory.pathing = creep.pos.findPathTo(targets,{ignoreCreeps : true});
+          //}
+          creep.moveTo(targets, {visualizePathStyle: {stroke: "#fff"}});
         }
       } else {
         roleUpgrader.run(creep)        // Next role
