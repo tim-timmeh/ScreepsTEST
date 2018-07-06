@@ -25,11 +25,17 @@ var roleRepairer = {
             if (targetsT.length > 0) {
                 targetsT.sort((a,b) => a.energy - b.energy)
                 if(creep.transfer(targetsT[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(targetsT[0], {visualizePathStyle: {stroke: "#fff"}});
-                };		    
+                  if (creep.moveByPath(creep.memory.pathing) < 0 || !targetsT[0].pos.isEqualTo(creep.memory.pathing[creep.memory.pathing.length - 1])){
+                    creep.memory.pathing = creep.pos.findPathTo(targetsT[0],{ignoreCreeps : true});
+                  }
+                    //creep.moveTo(targetsT[0], {visualizePathStyle: {stroke: "#fff"}});
+                };
             } else if (targetsRepair) {
                 if (creep.repair(targetsRepair) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(targetsRepair, {visualizePathStyle: {stroke: "#fff"}});
+                  if (creep.moveByPath(creep.memory.pathing) < 0 || !targetsRepair.pos.isEqualTo(creep.memory.pathing[creep.memory.pathing.length - 1])){
+                    creep.memory.pathing = creep.pos.findPathTo(targetsRepair,{ignoreCreeps : true});
+                  }
+                    //creep.moveTo(targetsRepair, {visualizePathStyle: {stroke: "#fff"}});
                 };
             } else {
               roleBuilder.run(creep);        // Next role
@@ -43,12 +49,18 @@ var roleRepairer = {
                   return (s.structureType == STRUCTURE_STORAGE);
               }
           });
-          if (targetsS && creep.room.storage.store[RESOURCE_ENERGY] > 0){
+          if (targetsS != "" && creep.room.storage.store[RESOURCE_ENERGY] > 0){
             if(creep.withdraw(targetsS[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(targetsS[0], {visualizePathStyle: {stroke: "#fff"}});
+              if (creep.moveByPath(creep.memory.pathing) < 0 || !targetsS[0].pos.isEqualTo(creep.memory.pathing[creep.memory.pathing.length - 1])){
+                creep.memory.pathing = creep.pos.findPathTo(targetsS[0],{ignoreCreeps : true});
+              }
+            //creep.moveTo(targetsS[0], {visualizePathStyle: {stroke: "#fff"}});
             }  // **Change to find closest energy
           } else if(creep.harvest(sources) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(sources, {visualizePathStyle: {stroke: '#fa0'}});
+            if (creep.moveByPath(creep.memory.pathing) < 0 || !sources.pos.isEqualTo(creep.memory.pathing[creep.memory.pathing.length - 1])){
+              creep.memory.pathing = creep.pos.findPathTo(sources,{ignoreCreeps : true});
+            }
+                //creep.moveTo(sources, {visualizePathStyle: {stroke: '#fa0'}});
             }
 	    }
 	}
