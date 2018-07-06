@@ -78,7 +78,7 @@ module.exports.loop = function () {
         } else {
           newName = "Miner" + Game.time;
           console.log("This source has no creep: " + source + "\nSpawning new miner: " + newName);
-          spawn.spawnCreep([WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE], newName, {
+          spawn.spawnCreep([WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE], newName, {
             memory: {
               role: "miner",
               minerSource: source.id
