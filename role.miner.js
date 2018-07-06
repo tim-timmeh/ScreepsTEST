@@ -7,7 +7,10 @@ var roleMiner = {
   run: function (creep) {
     let source = Game.getObjectById(creep.memory.minerSource)
 		if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
-      creep.moveTo(source, {visualizePathStyle: {stroke: '#fa0'}});
+      if (creep.moveByPath(creep.memory.pathing) < 0 || !source.pos.isEqualTo(creep.memory.pathing[creep.memory.pathing.length - 1])){
+        creep.memory.pathing = creep.pos.findPathTo(source,{ignoreCreeps : true});
+      }
+      //creep.moveTo(source, {visualizePathStyle: {stroke: '#fa0'}});
 	  }
   }
 }
