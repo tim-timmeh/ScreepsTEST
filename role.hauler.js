@@ -24,14 +24,15 @@ var roleHauler = {
             } else if(creep.withdraw(haulerSource, RESOURCE_LEMERGIUM ) == ERR_NOT_IN_RANGE || creep.withdraw(haulerSource, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(haulerSource, {visualizePathStyle: {stroke: '#fa0'}});
             }
-        }
-        else {
-            var targets = creep.room.find(FIND_STRUCTURES, {
+        } else {
+          if (creep.carry.energy != 0) {
+            var targets = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                     filter: (s) => {
                         return (s.structureType == STRUCTURE_EXTENSION || s.structureType == STRUCTURE_SPAWN) &&
                             s.energy < s.energyCapacity;
                     }
             });
+          }
             /*var targetsT = creep.room.find(FIND_STRUCTURES, {
                 filter: (s) => {
                     return (s.structureType == STRUCTURE_TOWER) && s.energy < s.energyCapacity;
@@ -42,7 +43,7 @@ var roleHauler = {
                     return (s.structureType == STRUCTURE_STORAGE);
                 }
             });
-            if(targets.length > 0) {
+            if(targets != undefined) {
               if(creep.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(targets[0], {visualizePathStyle: {stroke: "#fff"}});
               }
@@ -51,7 +52,7 @@ var roleHauler = {
                 creep.moveTo(targetsT[0], {visualizePathStyle: {stroke: "#fff"}});
               }*/
             } else if (targetsS && creep.room.storage.store[RESOURCE_ENERGY] < targetsS[0].storeCapacity){
-              if(creep.transfer(targetsS[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+              if(creep.transfer(targetsS[0], RESOURCE_LEMERGIUM) == ERR_NOT_IN_RANGE || creep.transfer(targetsS[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(targetsS[0], {visualizePathStyle: {stroke: "#fff"}});
               }
             } else {
