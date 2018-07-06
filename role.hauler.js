@@ -44,14 +44,14 @@ var roleHauler = {
                 }
             });
             if(targets != undefined) {
-              if(creep.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(targets[0], {visualizePathStyle: {stroke: "#fff"}});
+              if(creep.transfer(targets, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(targets, {visualizePathStyle: {stroke: "#fff"}});
               }
             /*} else if (targetsT.length > 0) {
               if(creep.transfer(targetsT[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(targetsT[0], {visualizePathStyle: {stroke: "#fff"}});
               }*/
-            } else if (targetsS && creep.room.storage.store[RESOURCE_ENERGY] < targetsS[0].storeCapacity){
+            } else if (targetsS != "" && creep.room.storage.store[RESOURCE_ENERGY] < targetsS[0].storeCapacity){
               if(creep.transfer(targetsS[0], RESOURCE_LEMERGIUM) == ERR_NOT_IN_RANGE || creep.transfer(targetsS[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(targetsS[0], {visualizePathStyle: {stroke: "#fff"}});
               }
