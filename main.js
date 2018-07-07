@@ -14,13 +14,18 @@ module.exports.loop = function () {
   *** Check if MemoryPathing broke resource pickup from ground
   *** Wipe old containers from memory if they die.
   *** Check how miners are spawned and not limited by haulers as when starting miners will be more (building containers for hauler spawn)
+  *** If get stuck do normal move
   ** Creeps get from storage > container > source
   ** Dynamic creep size spawning
+  ** Miners to place/build container and add id to memory. (Needs work part)
   ** Upgrader if storage.rangeTo(Upgrader) > 4 then Build Link (Or spawn with MOVE/CARRY parts? untill link?)
   ** Haulers to build Roads
    * while above ~50% storage spawn super || multiple upgraders?
-   * code / module structure cleanup
-   * Optimise 1 search per type = .deserialize from memory if possible, if not do find then .serialize to memory.
+   * find resource(not in mem), add to mem, if hauler.xy close to mem.xy & !carryCapacity, pickup, continue
+   * breakup main into different modules (spawner etc)
+   * Optimise vars to .deserialize from memory if possible, if not do find then .serialize to memory.
+   * .serializePath && .deserializePath - if memory false -> Do findClosestByPath -> serialize to memory ->
+                                          creep.move via memory -> at error || end = clear memory
   */
 
   // Clear memory of old creeps.
@@ -43,7 +48,7 @@ module.exports.loop = function () {
     var haulers = _.filter(spawnRoomCreeps, (creep) => creep.memory.role == "hauler");
     var butlers = _.filter(spawnRoomCreeps, (creep) => creep.memory.role == "butler");
     var roomSources = spawn.room.find(FIND_SOURCES);
-    var roomMinerals = spawn.room.find(FIND_MINERALS, { filter : a => a.Amount > 0});
+    var roomMinerals = spawn.room.find(FIND_MINERALS);
     var roomAllSources = roomSources.concat(roomMinerals)
     //roomSources.push(...roomMinerals)
     var newName;
@@ -73,6 +78,7 @@ module.exports.loop = function () {
               minerSource: source.id
             }
           });
+          break;
         } else {
           newName = "Miner" + Game.time;
           console.log("This source has no creep: " + source + "\nSpawning new miner: " + newName);
@@ -82,6 +88,7 @@ module.exports.loop = function () {
               minerSource: source.id
             }
           });
+          break;
         }
       }
 
@@ -99,6 +106,7 @@ module.exports.loop = function () {
               haulerSource : container
             }
           });
+          break;
         } else {
           continue;
         }
@@ -154,21 +162,27 @@ module.exports.loop = function () {
       var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
       if (creep.memory.role == "butler") {
         roleButler.run(creep);
+        continue;
       }
       if (creep.memory.role == "upgrader") {
         roleUpgrader.run(creep);
+        continue;
       }
       if (creep.memory.role == "builder") {
         roleBuilder.run(creep);
+        continue;
       }
       if (creep.memory.role == "repairer") {
         roleRepairer.run(creep);
+        continue;
       }
       if (creep.memory.role == "miner") {
         roleMiner.run(creep);
+        continue;
       }
       if (creep.memory.role == "hauler") {
         roleHauler.run(creep);
+        continue;
       }
     }
   }
