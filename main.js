@@ -49,7 +49,7 @@ module.exports.loop = function () {
     var haulers = _.filter(spawnRoomCreeps, (creep) => creep.memory.role == "hauler");
     var butlers = _.filter(spawnRoomCreeps, (creep) => creep.memory.role == "butler");
     var roomSources = spawn.room.find(FIND_SOURCES);
-    var roomMinerals = spawn.room.find(FIND_MINERALS);
+    var roomMinerals = spawn.room.find(FIND_MINERALS, { filter : a => a.Amount > 0});
     var roomAllSources = roomSources.concat(roomMinerals)
     //roomSources.push(...roomMinerals)
     var newName;
