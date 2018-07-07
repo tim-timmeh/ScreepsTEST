@@ -10,7 +10,6 @@ var roleButler = require("role.butler");
 
 module.exports.loop = function () {
 
-
   /*TODO*
   *** Check if MemoryPathing broke resource pickup from ground
   *** Wipe old containers from memory if they die.
@@ -65,7 +64,7 @@ module.exports.loop = function () {
         }
       });
 
-    } else if (miners.length < roomAllSources.length && miners.length <= haulers.length) {
+    } else if (miners.length < 1 || (miners.length < roomAllSources.length && haulers.length > 0)) {
       for (var source of roomAllSources) {
         let filteredCreep = _.filter(Game.creeps, (creep) => creep.memory.minerSource == source.id);
         if (filteredCreep != "") {
@@ -113,7 +112,7 @@ module.exports.loop = function () {
     } else if (upgraders.length < 1) {
       newName = "Upgrader" + Game.time;
       console.log("Upgraders: " + upgraders.length + "\nSpawning new upgrader: " + newName);
-      spawn.spawnCreep([WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE], newName, {
+      spawn.spawnCreep([WORK, WORK, WORK, WORK, CARRY, MOVE], newName, {
         memory: {
           role: "upgrader"
         }
