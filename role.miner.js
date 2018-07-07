@@ -1,11 +1,9 @@
 "use strict";
 require("moveToModule")
-var roomMinerals
 var roleMiner = {
   run: function(creep) {
     var source = Game.getObjectById(creep.memory.minerSource);
     var structures = [];
-    //if (creep.harvest(source) == ERR_NOT_ENOUGH_RESOURCES && (roomMinerals = spawn.room.find(FIND_MINERALS)) == source)
     if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
       creep.moveToModule(source);
     } else if (creep.harvest(source) == !ERR_BUSY && ((structures = creep.pos.lookFor(LOOK_STRUCTURES)) != undefined && structures.length < 1)) {

@@ -66,7 +66,6 @@ module.exports.loop = function () {
       });
 
     } else if (miners.length < 1 || (miners.length < roomAllSources.length && haulers.length > 0)) {
-    //--} else if (miners.length < roomAllSources.length && miners.length <= haulers.length) {
       for (var source of roomAllSources) {
         let filteredCreep = _.filter(Game.creeps, (creep) => creep.memory.minerSource == source.id);
         if (filteredCreep != "") {
@@ -80,6 +79,7 @@ module.exports.loop = function () {
               minerSource: source.id
             }
           });
+          break;
         } else {
           newName = "Miner" + Game.time;
           console.log("This source has no creep: " + source + "\nSpawning new miner: " + newName);
@@ -89,9 +89,9 @@ module.exports.loop = function () {
               minerSource: source.id
             }
           });
+          break;
         }
       }
-
     } else if (Memory.containers && haulers.length < Memory.containers.length) {
       for (var container of Memory.containers) {
           if (lastContainer == container) {
@@ -106,6 +106,7 @@ module.exports.loop = function () {
               haulerSource : container
             }
           });
+          break;
         } else {
           continue;
         }
@@ -114,7 +115,7 @@ module.exports.loop = function () {
     } else if (upgraders.length < 1) {
       newName = "Upgrader" + Game.time;
       console.log("Upgraders: " + upgraders.length + "\nSpawning new upgrader: " + newName);
-      spawn.spawnCreep([WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE], newName, {
+      spawn.spawnCreep([WORK, WORK, WORK, WORK, CARRY, MOVE], newName, {
         memory: {
           role: "upgrader"
         }
@@ -161,21 +162,27 @@ module.exports.loop = function () {
       var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
       if (creep.memory.role == "butler") {
         roleButler.run(creep);
+        continue;
       }
       if (creep.memory.role == "upgrader") {
         roleUpgrader.run(creep);
+        continue;
       }
       if (creep.memory.role == "builder") {
         roleBuilder.run(creep);
+        continue;
       }
       if (creep.memory.role == "repairer") {
         roleRepairer.run(creep);
+        continue;
       }
       if (creep.memory.role == "miner") {
         roleMiner.run(creep);
+        continue;
       }
       if (creep.memory.role == "hauler") {
         roleHauler.run(creep);
+        continue;
       }
     }
   }
