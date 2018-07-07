@@ -11,7 +11,6 @@ Creep.prototype.moveToModule = function(destination, ignore = true) {
       positionMem = new RoomPosition(this.memory.position.x, this.memory.position.y, this.memory.position.roomName);
     }
     if (this.memory.position != undefined && this.pos.toString() == positionMem.toString()) {
-      console.log("STUCK DETECTED, FINDING NEW PATH\n" + this.name);
       this.memory.pathing = this.pos.findPathTo(destination, {
         ignoreCreeps: false
       });
