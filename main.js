@@ -14,18 +14,13 @@ module.exports.loop = function () {
   *** Check if MemoryPathing broke resource pickup from ground
   *** Wipe old containers from memory if they die.
   *** Check how miners are spawned and not limited by haulers as when starting miners will be more (building containers for hauler spawn)
-  *** If get stuck do normal move
   ** Creeps get from storage > container > source
   ** Dynamic creep size spawning
-  ** Miners to place/build container and add id to memory. (Needs work part)
   ** Upgrader if storage.rangeTo(Upgrader) > 4 then Build Link (Or spawn with MOVE/CARRY parts? untill link?)
   ** Haulers to build Roads
    * while above ~50% storage spawn super || multiple upgraders?
-   * find resource(not in mem), add to mem, if hauler.xy close to mem.xy & !carryCapacity, pickup, continue
-   * breakup main into different modules (spawner etc)
-   * Optimise vars to .deserialize from memory if possible, if not do find then .serialize to memory.
-   * .serializePath && .deserializePath - if memory false -> Do findClosestByPath -> serialize to memory ->
-                                          creep.move via memory -> at error || end = clear memory
+   * code / module structure cleanup
+   * Optimise 1 search per type = .deserialize from memory if possible, if not do find then .serialize to memory.
   */
 
   // Clear memory of old creeps.
