@@ -37,12 +37,6 @@ var roleHauler = {
           }
         });
       }
-
-      /*var targetsT = creep.room.find(FIND_STRUCTURES, {
-          filter: (s) => {
-              return (s.structureType == STRUCTURE_TOWER) && s.energy < s.energyCapacity;
-          }
-      });*/
       var targetsS = creep.room.find(FIND_MY_STRUCTURES, {
         filter: (s) => {
           return (s.structureType == STRUCTURE_STORAGE);
@@ -52,18 +46,10 @@ var roleHauler = {
       if (targets != undefined) {
         if (creep.transfer(targets, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
           creep.moveToModule(targets);
-          //creep.moveTo(targets, {visualizePathStyle: {stroke: "#fff"}});
         }
-        /*} else if (targetsT.length > 0) {
-          if(creep.transfer(targetsT[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(targetsT[0], {visualizePathStyle: {stroke: "#fff"}});
-          }*/
       } else if (targetsS != "" && creep.room.storage.store[RESOURCE_ENERGY] < targetsS[0].storeCapacity) {
-        //for(const resourceType in creep.carry) {
-        //    creep.transfer((targetsS[0], resourceType) == ERR_NOT_IN_RANGE);
         if (creep.transfer(targetsS[0], RESOURCE_LEMERGIUM) == ERR_NOT_IN_RANGE || creep.transfer(targetsS[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
           creep.moveToModule(targetsS[0]);
-          //creep.moveTo(targetsS[0], {visualizePathStyle: {stroke: "#fff"}});
         }
       } else {
         roleUpgrader.run(creep);

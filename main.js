@@ -10,6 +10,7 @@ var roleButler = require("role.butler");
 
 module.exports.loop = function () {
 
+
   /*TODO*
   *** Check if MemoryPathing broke resource pickup from ground
   *** Wipe old containers from memory if they die.
@@ -32,7 +33,7 @@ module.exports.loop = function () {
   for (var name in Memory.creeps) {
     if (!Game.creeps[name]) {
       delete Memory.creeps[name];
-      console.log("Clearing non-existing creep memory:", name);
+      console.log("Clearing non-existing creep memory: ", name);
     }
   }
   // Multi room - run code on each room
@@ -91,7 +92,6 @@ module.exports.loop = function () {
           break;
         }
       }
-
     } else if (Memory.containers && haulers.length < Memory.containers.length) {
       for (var container of Memory.containers) {
           if (lastContainer == container) {

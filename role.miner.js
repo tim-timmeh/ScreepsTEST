@@ -1,4 +1,5 @@
 "use strict";
+require("moveToModule")
 var roleMiner = {
   run: function(creep) {
     var source = Game.getObjectById(creep.memory.minerSource);
