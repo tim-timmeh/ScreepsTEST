@@ -1,4 +1,5 @@
-"use strict"
+"use strict";
+require("moveToModule");
 var roleUpgrader = require("role.upgrader");
 var roleBuilder = {
 
@@ -6,50 +7,38 @@ var roleBuilder = {
   run: function(creep) {
     if (creep.memory.building && creep.carry.energy == 0) {
       creep.memory.building = false;
-      creep.say("\u26CF harvest")
+      creep.say("\u26CF harvest");
     }
     if (!creep.memory.building && creep.carry.energy == creep.carryCapacity) {
       creep.memory.building = true;
       creep.say("\ud83d\udd28 Build");
     }
-
-    if(creep.memory.building) {
+    if (creep.memory.building) {
       var targets = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES);
 
       if (targets) {
         if (creep.build(targets) == ERR_NOT_IN_RANGE) {
-          //if (creep.moveByPath(creep.memory.pathing) < 0 || !targets.pos.isEqualTo(creep.memory.pathing[creep.memory.pathing.length - 1])){
-          //  creep.memory.pathing = creep.pos.findPathTo(targets,{ignoreCreeps : true});
-          //}
-          creep.moveTo(targets, {visualizePathStyle: {stroke: "#fff"}});
+          creep.moveToModule(targets);
         }
       } else {
-        roleUpgrader.run(creep)        // Next role
+        roleUpgrader.run(creep);
       }
-    }
-    else {
-      // **Change to find closest energy
+    } else {
       var sources = creep.pos.findClosestByPath(FIND_SOURCES);
       var targetsS = creep.room.find(FIND_MY_STRUCTURES, {
-          filter: (s) => {
-              return (s.structureType == STRUCTURE_STORAGE);
-          }
+        filter: (s) => {
+          return (s.structureType == STRUCTURE_STORAGE);
+        }
       });
-      if (targetsS && creep.room.storage.store[RESOURCE_ENERGY] > 0){
-        if(creep.withdraw(targetsS[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-          if (creep.moveByPath(creep.memory.pathing) < 0 || !targetsS[0].pos.isEqualTo(creep.memory.pathing[creep.memory.pathing.length - 1])){
-            creep.memory.pathing = creep.pos.findPathTo(targetsS[0],{ignoreCreeps : true});
-          }
-        //creep.moveTo(targetsS[0], {visualizePathStyle: {stroke: "#fff"}});
-        }  // **Change to find closest energy
-      } else if(creep.harvest(sources) == ERR_NOT_IN_RANGE) {
-        if (creep.moveByPath(creep.memory.pathing) < 0 || !sources.pos.isEqualTo(creep.memory.pathing[creep.memory.pathing.length - 1])){
-          creep.memory.pathing = creep.pos.findPathTo(sources,{ignoreCreeps : true});
+      if (targetsS && creep.room.storage.store[RESOURCE_ENERGY] > 0) {
+        if (creep.withdraw(targetsS[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+          creep.moveToModule(targetsS[0]);
         }
-        //creep.moveTo(sources, {visualizePathStyle: {stroke: '#fa0'}});
-        }
+      } else if (creep.harvest(sources) == ERR_NOT_IN_RANGE) {
+        creep.moveToModule(sources);
       }
     }
+  }
 };
 
 module.exports = roleBuilder;
