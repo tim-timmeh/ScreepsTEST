@@ -7,6 +7,7 @@ var roleTower = require("role.tower");
 var roleMiner = require("role.miner");
 var roleHauler = require("role.hauler");
 var roleButler = require("role.butler");
+var roleClaimer = require("role.claimer");
 
 // Is obj empty?
 function isEmpty(obj) {
