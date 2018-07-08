@@ -1,5 +1,7 @@
 "use strict";
 var roleUpgrader = require("role.upgrader");
+require("moveToModule");
+var pioneerFlag;
 var rolePioneer = {
 
   /** @param {Creep} creep **/
