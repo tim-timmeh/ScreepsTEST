@@ -8,8 +8,17 @@ var roleMiner = require("role.miner");
 var roleHauler = require("role.hauler");
 var roleButler = require("role.butler");
 
-module.exports.loop = function () {
+// Is obj empty?
+function isEmpty(obj) {
+  for(var key in obj) {
+    if(obj.hasOwnProperty(key)) {
+      return false;
+    }
+  }
+  return true;
+};
 
+module.exports.loop = function () {
 
   /*TODO*
   *** Check if MemoryPathing broke resource pickup from ground
@@ -36,6 +45,22 @@ module.exports.loop = function () {
       console.log("Clearing non-existing creep memory: ", name);
     }
   }
+
+  // Check for claimer flag
+
+  if (!isEmpty(Game.flags) && Game.flags.claimFlag) {
+    var claimers = _.filter(Game.creeps, (creep) => creep.memory.role == "claimer");
+    if (claimers.length == 0) {
+      newName = "Claimer" + Game.time;
+      console.log("Spawning new claimer: " + newName);
+      spawn.spawnCreep([CLAIM, MOVE], newName, {
+        memory: {
+          role: "claimer"
+        }
+      });
+    }
+  }
+
   // Multi room - run code on each room
   for (var spawnName in Game.spawns) {
     var spawn = Game.spawns[spawnName]
@@ -182,6 +207,10 @@ module.exports.loop = function () {
       }
       if (creep.memory.role == "hauler") {
         roleHauler.run(creep);
+        continue;
+      }
+      if (creep.memory.role == "claimer") {
+        roleClaimer.run(creep);
         continue;
       }
     }
