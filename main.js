@@ -17,8 +17,12 @@ function isEmpty(obj) {
   }
   return true;
 };
+const profiler = require('screeps-profiler');
 
+// This line monkey patches the global prototypes.
+profiler.enable();
 module.exports.loop = function () {
+  profiler.wrap(function() {
 
   /*TODO*
   *** Check if MemoryPathing broke resource pickup from ground
@@ -215,4 +219,5 @@ module.exports.loop = function () {
       }
     }
   }
+  });
 };
