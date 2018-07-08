@@ -7,12 +7,13 @@ var roleTower = require("role.tower");
 var roleMiner = require("role.miner");
 var roleHauler = require("role.hauler");
 var roleButler = require("role.butler");
-
-// Game.profiler.background && Game.profiler.output(1000) || Game.profiler.reset || Game.profiler.stream(ticks)
 const profiler = require('screeps-profiler');
+
+// This line monkey patches the global prototypes.
 profiler.enable();
 module.exports.loop = function () {
   profiler.wrap(function() {
+
 
   /*TODO*
   *** Check if MemoryPathing broke resource pickup from ground
@@ -189,5 +190,5 @@ module.exports.loop = function () {
       }
     }
   }
-})
+  });
 };
