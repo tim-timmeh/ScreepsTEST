@@ -50,20 +50,6 @@ module.exports.loop = function () {
     }
   }
 
-  // Check for claimer flag
-
-  if (!isEmpty(Game.flags) && Game.flags.claimFlag) {
-    var claimers = _.filter(Game.creeps, (creep) => creep.memory.role == "claimer");
-    if (claimers.length == 0) {
-      newName = "Claimer" + Game.time;
-      console.log("Spawning new claimer: " + newName);
-      spawn.spawnCreep([CLAIM, MOVE], newName, {
-        memory: {
-          role: "claimer"
-        }
-      });
-    }
-  }
 
   // Multi room - run code on each room
   for (var spawnName in Game.spawns) {
@@ -83,6 +69,20 @@ module.exports.loop = function () {
     //roomSources.push(...roomMinerals)
     var newName;
     var lastContainer
+    
+    // Check for claimer flag
+    if (!isEmpty(Game.flags) && Game.flags.claimFlag) {
+      var claimers = _.filter(Game.creeps, (creep) => creep.memory.role == "claimer");
+      if (claimers.length == 0) {
+        newName = "Claimer" + Game.time;
+        console.log("Spawning new claimer: " + newName);
+        spawn.spawnCreep([CLAIM, MOVE], newName, {
+          memory: {
+            role: "claimer"
+          }
+        });
+      }
+    }
 
     // Check role array, spawn if below specified count.
     if (butlers.length == 0) {
