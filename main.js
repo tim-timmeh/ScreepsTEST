@@ -7,8 +7,12 @@ var roleTower = require("role.tower");
 var roleMiner = require("role.miner");
 var roleHauler = require("role.hauler");
 var roleButler = require("role.butler");
+const profiler = require('screeps-profiler');
 
+// This line monkey patches the global prototypes.
+profiler.enable();
 module.exports.loop = function () {
+  profiler.wrap(function() {
 
 
   /*TODO*
@@ -186,4 +190,5 @@ module.exports.loop = function () {
       }
     }
   }
+  });
 };
