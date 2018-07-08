@@ -7,13 +7,23 @@ var roleTower = require("role.tower");
 var roleMiner = require("role.miner");
 var roleHauler = require("role.hauler");
 var roleButler = require("role.butler");
+var roleClaimer = require("role.claimer");
+
+// Is obj empty?
+function isEmpty(obj) {
+  for(var key in obj) {
+    if(obj.hasOwnProperty(key)) {
+      return false;
+    }
+  }
+  return true;
+};
 const profiler = require('screeps-profiler');
 
 // This line monkey patches the global prototypes.
 profiler.enable();
 module.exports.loop = function () {
   profiler.wrap(function() {
-
 
   /*TODO*
   *** Check if MemoryPathing broke resource pickup from ground
@@ -40,6 +50,8 @@ module.exports.loop = function () {
       console.log("Clearing non-existing creep memory: ", name);
     }
   }
+
+
   // Multi room - run code on each room
   for (var spawnName in Game.spawns) {
     var spawn = Game.spawns[spawnName]
@@ -58,6 +70,20 @@ module.exports.loop = function () {
     //roomSources.push(...roomMinerals)
     var newName;
     var lastContainer
+    
+    // Check for claimer flag
+    if (!isEmpty(Game.flags) && Game.flags.claimFlag) {
+      var claimers = _.filter(Game.creeps, (creep) => creep.memory.role == "claimer");
+      if (claimers.length == 0) {
+        newName = "Claimer" + Game.time;
+        console.log("Spawning new claimer: " + newName);
+        spawn.spawnCreep([CLAIM, MOVE], newName, {
+          memory: {
+            role: "claimer"
+          }
+        });
+      }
+    }
 
     // Check role array, spawn if below specified count.
     if (butlers.length == 0) {
@@ -186,6 +212,10 @@ module.exports.loop = function () {
       }
       if (creep.memory.role == "hauler") {
         roleHauler.run(creep);
+        continue;
+      }
+      if (creep.memory.role == "claimer") {
+        roleClaimer.run(creep);
         continue;
       }
     }
