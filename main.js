@@ -8,6 +8,7 @@ var roleMiner = require("role.miner");
 var roleHauler = require("role.hauler");
 var roleButler = require("role.butler");
 var roleClaimer = require("role.claimer");
+var rolePioneer = require("role.pioneer");
 
 // Is obj empty?
 function isEmpty(obj) {
@@ -80,6 +81,20 @@ module.exports.loop = function () {
         spawn.spawnCreep([CLAIM, MOVE], newName, {
           memory: {
             role: "claimer"
+          }
+        });
+      }
+    }
+    
+    // Check for pioneer flag
+    if (!isEmpty(Game.flags) && Game.flags.pioneerFlag) {
+      var pioneers = _.filter(Game.creeps, (creep) => creep.memory.role == "pioneer");
+      if (pioneers.length == 0) {
+        newName = "Pioneer" + Game.time;
+        console.log("Spawning new pioneer: " + newName);
+        spawn.spawnCreep([WORK, CARRY, MOVE, WORK, CARRY, MOVE], newName, {
+          memory: {
+            role: "pioneer"
           }
         });
       }
@@ -216,6 +231,10 @@ module.exports.loop = function () {
       }
       if (creep.memory.role == "claimer") {
         roleClaimer.run(creep);
+        continue;
+      }
+      if (creep.memory.role == "pioneer") {
+        rolePioneer.run(creep);
         continue;
       }
     }
