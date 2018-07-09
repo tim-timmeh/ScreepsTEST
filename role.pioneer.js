@@ -50,7 +50,7 @@ var rolePioneer = {
         });
         var targetsT = creep.room.find(FIND_STRUCTURES, {
           filter: (structure) => {
-            return (structure.structureType == STRUCTURE_TOWER) && structure.energy < structure.energyCapacity;
+            return (structure.structureType == STRUCTURE_TOWER) && structure.energy < (structure.energyCapacity / 2);
           }
         });
         if (targets != null) {
