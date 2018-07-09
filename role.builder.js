@@ -24,7 +24,7 @@ var roleBuilder = {
         roleUpgrader.run(creep);
       }
     } else {
-      var sources = creep.pos.findClosestByPath(FIND_SOURCES);
+      var sources;
       var targetsS = creep.room.find(FIND_MY_STRUCTURES, {
         filter: (s) => {
           return (s.structureType == STRUCTURE_STORAGE);
@@ -34,7 +34,7 @@ var roleBuilder = {
         if (creep.withdraw(targetsS[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
           creep.moveToModule(targetsS[0]);
         }
-      } else if (creep.harvest(sources) == ERR_NOT_IN_RANGE) {
+      } else if (creep.harvest(sources = creep.pos.findClosestByPath(FIND_SOURCES)) == ERR_NOT_IN_RANGE) {
         creep.moveToModule(sources);
       }
     }
