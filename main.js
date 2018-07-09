@@ -93,7 +93,7 @@ module.exports.loop = function () {
       if (pioneers.length < 2) {
         newName = "Pioneer" + Game.time;
         console.log("Spawning new pioneer: " + newName);
-        spawn.spawnCreep([WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE], newName, {
+        spawn.spawnCreep([WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE], newName, {
           memory: {
             role: "pioneer"
           }
