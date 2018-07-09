@@ -89,10 +89,10 @@ module.exports.loop = function () {
     // Check for pioneer flag
     if (!isEmpty(Game.flags) && Game.flags.pioneerFlag) {
       var pioneers = _.filter(Game.creeps, (creep) => creep.memory.role == "pioneer");
-      if (pioneers.length == 0) {
+      if (pioneers.length < 2) {
         newName = "Pioneer" + Game.time;
         console.log("Spawning new pioneer: " + newName);
-        spawn.spawnCreep([WORK, CARRY, MOVE, WORK, CARRY, MOVE], newName, {
+        spawn.spawnCreep([WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE], newName, {
           memory: {
             role: "pioneer"
           }
