@@ -9,6 +9,7 @@ var roleHauler = require("role.hauler");
 var roleButler = require("role.butler");
 var roleClaimer = require("role.claimer");
 var rolePioneer = require("role.pioneer");
+var roleAttacker = require("role.attacker");
 
 // Is obj empty?
 function isEmpty(obj) {
@@ -73,33 +74,6 @@ module.exports.loop = function () {
     var lastContainer
     var spawnRoomContainers = spawn.room.name
     
-    // Check for claimer flag
-    if (!isEmpty(Game.flags) && Game.flags.claimFlag) {
-      var claimers = _.filter(Game.creeps, (creep) => creep.memory.role == "claimer");
-      if (claimers.length == 0) {
-        newName = "Claimer" + Game.time;
-        console.log("Spawning new claimer: " + newName);
-        spawn.spawnCreep([CLAIM, MOVE], newName, {
-          memory: {
-            role: "claimer"
-          }
-        });
-      }
-    }
-    
-    // Check for pioneer flag
-    if (!isEmpty(Game.flags) && Game.flags.pioneerFlag) {
-      var pioneers = _.filter(Game.creeps, (creep) => creep.memory.role == "pioneer");
-      if (pioneers.length < 2) {
-        newName = "Pioneer" + Game.time;
-        console.log("Spawning new pioneer: " + newName);
-        spawn.spawnCreep([WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE], newName, {
-          memory: {
-            role: "pioneer"
-          }
-        });
-      }
-    }
 
     // Check role array, spawn if below specified count.
     if (butlers.length == 0) {
@@ -119,7 +93,7 @@ module.exports.loop = function () {
         } else if (roomMinerals != "" && source.id == roomMinerals[0].id) {
           newName = "Mineral Miner" + Game.time;
           console.log("This source has no creep: " + source + "\nSpawning new mineral miner: " + newName);
-          spawn.spawnCreep([WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE], newName, {
+          spawn.spawnCreep([WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE, MOVE, MOVE], newName, {
             memory: {
               role: "miner",
               minerSource: source.id
@@ -183,7 +157,48 @@ module.exports.loop = function () {
         }
       });
     }
-
+    
+    // Check for claimer flag
+    else if (!isEmpty(Game.flags) && Game.flags.claimFlag) {
+      var claimers = _.filter(Game.creeps, (creep) => creep.memory.role == "claimer");
+      if (claimers.length == 0) {
+        newName = "Claimer" + Game.time;
+        console.log("Spawning new claimer: " + newName);
+        spawn.spawnCreep([CLAIM, MOVE], newName, {
+          memory: {
+            role: "claimer"
+          }
+        });
+      }
+    }
+    
+    // Check for pioneer flag
+    else if (!isEmpty(Game.flags) && Game.flags.pioneerFlag) {
+      var pioneers = _.filter(Game.creeps, (creep) => creep.memory.role == "pioneer");
+      if (pioneers.length < 2) {
+        newName = "Pioneer" + Game.time;
+        console.log("Spawning new pioneer: " + newName);
+        spawn.spawnCreep([WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE], newName, {
+          memory: {
+            role: "pioneer"
+          }
+        });
+      }
+    }
+    
+    // Check for attacker flag
+    else if (!isEmpty(Game.flags) && Game.flags.attackerFlag) {
+      var attackers = _.filter(Game.creeps, (creep) => creep.memory.role == "attacker");
+      if (attackers.length < 3) {
+        newName = "Attacker" + Game.time;
+        console.log("Spawning new attacker: " + newName);
+        spawn.spawnCreep([ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, HEAL ], newName, {
+          memory: {
+            role: "attacker"
+          }
+        });
+      }
+    }
     //Spawning dialog.
     if (spawn.spawning) {
       var spawningCreep = Game.creeps[spawn.spawning.name];
@@ -236,6 +251,10 @@ module.exports.loop = function () {
       }
       if (creep.memory.role == "pioneer") {
         rolePioneer.run(creep);
+        continue;
+      }
+      if (creep.memory.role == "attacker") {
+        roleAttacker.run(creep);
         continue;
       }
     }
