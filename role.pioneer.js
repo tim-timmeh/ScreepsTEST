@@ -27,7 +27,14 @@ var rolePioneer = {
             return (s.structureType == STRUCTURE_STORAGE);
           }
         });
-        if (targetsS != "" && creep.room.storage.store[RESOURCE_ENERGY] > 0) {
+        var droppedSource = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1);
+      if (droppedSource != "" && creep.pickup(droppedSource[0]) == ERR_NOT_IN_RANGE) {
+        creep.moveTo(droppedSource, {
+          visualizePathStyle: {
+            stroke: '#fa0'
+          }
+        });
+      } else if (targetsS != "" && creep.room.storage.store[RESOURCE_ENERGY] > 0) {
           if (creep.withdraw(targetsS[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
             creep.moveToModule(targetsS[0]);
           }
