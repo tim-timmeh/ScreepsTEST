@@ -159,7 +159,7 @@ module.exports.loop = function () {
             }
           });
         }
-      } else if (spawn.room.energyCapacityAvailable > 550 && (builders.length < 1 || (builders.length <= spawn.room.find(FIND_CONSTRUCTION_SITES).length / 10))) {
+      } else if (spawn.room.energyCapacityAvailable > 800 && (builders.length < 1 || (builders.length <= spawn.room.find(FIND_CONSTRUCTION_SITES).length / 10))) {
         newName = "Builder" + Game.time + spawn.room.name[4];
         console.log("Builders: " + spawn.room.name + " - " + builders.length + "\nSpawning new builder: " + newName);
         spawn.spawnCreep([WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE], newName, {
