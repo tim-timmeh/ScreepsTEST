@@ -1,5 +1,6 @@
 "use strict";
 var roleUpgrader = require("role.upgrader");
+var roleBuilder = require("role.builder");
 require("moveToModule");
 var pioneerFlag;
 var rolePioneer = {
@@ -55,7 +56,7 @@ var rolePioneer = {
             creep.moveToModule(targetsT[0]);
           }
         } else {
-          roleUpgrader.run(creep);
+          roleBuilder.run(creep);
         }
       }
     }

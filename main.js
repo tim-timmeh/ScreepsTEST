@@ -71,6 +71,7 @@ module.exports.loop = function () {
     //roomSources.push(...roomMinerals)
     var newName;
     var lastContainer
+    var spawnRoomContainers = spawn.room.name
     
     // Check for claimer flag
     if (!isEmpty(Game.flags) && Game.flags.claimFlag) {
@@ -92,7 +93,7 @@ module.exports.loop = function () {
       if (pioneers.length < 2) {
         newName = "Pioneer" + Game.time;
         console.log("Spawning new pioneer: " + newName);
-        spawn.spawnCreep([WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE], newName, {
+        spawn.spawnCreep([WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE], newName, {
           memory: {
             role: "pioneer"
           }
@@ -137,8 +138,8 @@ module.exports.loop = function () {
           break;
         }
       }
-    } else if (Memory.containers && haulers.length < Memory.containers.length) {
-      for (var container of Memory.containers) {
+    } else if (Memory.containers[spawnRoomContainers] && haulers.length < Memory.containers[spawnRoomContainers].length) {
+      for (var container of Memory.containers[spawnRoomContainers]) {
           if (lastContainer == container) {
             console.log("DUPE")
           }
