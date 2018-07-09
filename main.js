@@ -66,7 +66,7 @@ module.exports.loop = function () {
     var haulers = _.filter(spawnRoomCreeps, (creep) => creep.memory.role == "hauler");
     var butlers = _.filter(spawnRoomCreeps, (creep) => creep.memory.role == "butler");
     var roomSources = spawn.room.find(FIND_SOURCES);
-    var roomMinerals = spawn.room.find(FIND_MINERALS, { filter : a => a.Amount > 0});
+    var roomMinerals = spawn.room.find(FIND_MINERALS, { filter : a => a.mineralAmount > 0});
     var roomAllSources = roomSources.concat(roomMinerals)
     //roomSources.push(...roomMinerals)
     var newName;
@@ -138,8 +138,8 @@ module.exports.loop = function () {
           break;
         }
       }
-    } else if (Memory.containers[spawnRoomContainers] && haulers.length < Memory.containers[spawnRoomContainers].length) {
-      for (var container of Memory.containers[spawnRoomContainers]) {
+    } else if (Memory.containersTest[spawnRoomContainers] && haulers.length < Memory.containersTest[spawnRoomContainers].length) {
+      for (var container of Memory.containersTest[spawnRoomContainers]) {
           if (lastContainer == container) {
             console.log("DUPE")
           }
