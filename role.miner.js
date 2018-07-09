@@ -14,7 +14,7 @@ var roleMiner = {
       } else if (_.sum(creep.carry) >= (creep.carryCapacity - 25)) {
         creep.build(construction[0]);
       }
-    } else if (Memory.containers[creepRoomName] == undefined) {
+    } else if (!Memory.containers[creepRoomName]) {
       Memory.containers[creepRoomName] = [];
     } else if ((structures != undefined && structures != "") && Memory.containers[creepRoomName].indexOf(structures[0].id) == -1) {
       Memory.containers.push(structures[0].id);
