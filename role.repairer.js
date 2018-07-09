@@ -16,9 +16,7 @@ var roleRepairer = {
     }
 
     if (creep.memory.building) {
-      var targetsRepair = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-        filter: (hp) => hp.hits < (hp.hitsMax - 500) && hp.hits < 90000000
-      });
+      var targetsRepair
       var targetsT = creep.room.find(FIND_STRUCTURES, {
         filter: (structure) => {
           return (structure.structureType == STRUCTURE_TOWER) && structure.energy < structure.energyCapacity;
@@ -29,7 +27,9 @@ var roleRepairer = {
         if (creep.transfer(targetsT[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
           creep.moveToModule(targetsT[0]);
         }
-      } else if (targetsRepair) {
+      } else if (targetsRepair = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+        filter: (hp) => hp.hits < (hp.hitsMax - 500) && hp.hits < 90000000
+      })) {
         if (creep.repair(targetsRepair) == ERR_NOT_IN_RANGE) {
           creep.moveToModule(targetsRepair);
         }
