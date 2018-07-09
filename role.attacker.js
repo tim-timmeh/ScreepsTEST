@@ -17,7 +17,9 @@ var roleAttacker = {
         if (creep.attack(enemy) == ERR_NOT_IN_RANGE) {
           creep.moveToModule(enemy);
         }
-      } else if (creep.hits < creep.hitsMax) {
+      } else if (!creep.pos.isNearTo(attackerFlag)) {
+        creep.moveToModule(attackerFlag[0].pos)
+      } if (!enemy && creep.hits < creep.hitsMax) {
         creep.heal(creep)
       }
     }
