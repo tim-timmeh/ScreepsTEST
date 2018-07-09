@@ -1,15 +1,16 @@
 "use strict";
 var roleUpgrader = require("role.upgrader");
 var roleBuilder = require("role.builder");
+var rolePioneer = require("role.pioneer");
 require("moveToModule");
-var pioneerFlag;
+var attackerFlag;
 var roleAttacker = {
 
   /** @param {Creep} creep **/
   run: function(creep) {
-    pioneerFlag = _.filter(Game.flags, f => f.name == "pioneerFlag")
-    if (creep.pos.roomName != pioneerFlag[0].pos.roomName) {
-     creep.moveToModule(pioneerFlag[0].pos)
+    attackerFlag = _.filter(Game.flags, f => f.name == "attackerFlag")
+    if (creep.pos.roomName != attackerFlag[0].pos.roomName) {
+     creep.moveToModule(attackerFlag[0].pos)
     } else {
       if (creep.hits < creep.hitsMax) {
         creep.heal(creep)
