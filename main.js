@@ -68,7 +68,7 @@ module.exports.loop = function () {
       var butlers = _.filter(spawnRoomCreeps, (creep) => creep.memory.role == "butler");
       var roomSources = spawn.room.find(FIND_SOURCES);
       var roomMinerals = spawn.room.find(FIND_MINERALS, { filter : a => a.mineralAmount > 0});
-      var roomAllSources = roomSources.concat(roomMinerals)
+      var roomAllSources = roomSources//.concat(roomMinerals)          REMOVED WHILE BUILDING NEW BASE
       //roomSources.push(...roomMinerals)
       var newName;
       var lastContainer
