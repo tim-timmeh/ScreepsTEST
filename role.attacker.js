@@ -20,8 +20,6 @@ var roleAttacker = {
         if (creep.attack(enemy) == ERR_NOT_IN_RANGE) {
           creep.moveToModule(enemy);
         }
-      } else {
-        rolePioneer.run(creep);
       }
     }
   }
