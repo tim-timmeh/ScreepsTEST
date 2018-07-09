@@ -159,7 +159,7 @@ module.exports.loop = function () {
             }
           });
         }
-      } else if (builders.length < 1 || (builders.length <= spawn.room.find(FIND_CONSTRUCTION_SITES).length / 10)) {
+      } else if (spawn.room.energyCapacityAvailable > 550 && (builders.length < 1 || (builders.length <= spawn.room.find(FIND_CONSTRUCTION_SITES).length / 10))) {
         newName = "Builder" + Game.time + spawn.room.name[4];
         console.log("Builders: " + spawn.room.name + " - " + builders.length + "\nSpawning new builder: " + newName);
         spawn.spawnCreep([WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE], newName, {
@@ -200,7 +200,7 @@ module.exports.loop = function () {
       // Check for attacker flag
       if (!isEmpty(Game.flags) && Game.flags.attackerFlag) {
         var attackers = _.filter(Game.creeps, (creep) => creep.memory.role == "attacker");
-        if (attackers.length < 3) {
+        if (attackers.length < 2) {
           newName = "Attacker" + Game.time + spawn.room.name[4];
           console.log("Spawning new attacker: " + newName);
           spawn.spawnCreep([MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, MOVE, MOVE, HEAL], newName, {

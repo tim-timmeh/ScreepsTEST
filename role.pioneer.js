@@ -8,7 +8,7 @@ var rolePioneer = {
   /** @param {Creep} creep **/
   run: function(creep) {
     pioneerFlag = _.filter(Game.flags, f => f.name == "pioneerFlag")
-    if (creep.pos.roomName != pioneerFlag[0].pos.roomName) {
+    if (pioneerFlag[0] && creep.pos.roomName != pioneerFlag[0].pos.roomName) {
      creep.moveToModule(pioneerFlag[0].pos)
     } else {
       if (creep.memory.building && creep.carry.energy == 0) {
