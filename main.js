@@ -9,6 +9,7 @@ var roleHauler = require("role.hauler");
 var roleButler = require("role.butler");
 var roleClaimer = require("role.claimer");
 var rolePioneer = require("role.pioneer");
+var roleAttacker = require("role.attacker");
 
 // Is obj empty?
 function isEmpty(obj) {
@@ -100,6 +101,20 @@ module.exports.loop = function () {
         });
       }
     }
+    
+    // Check for attacker flag
+    if (!isEmpty(Game.flags) && Game.flags.attackerFlag) {
+      var attackers = _.filter(Game.creeps, (creep) => creep.memory.role == "attacker");
+      if (attackers.length < 2) {
+        newName = "Attacker" + Game.time;
+        console.log("Spawning new attacker: " + newName);
+        spawn.spawnCreep([ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, HEAL, HEAL, HEAL], newName, {
+          memory: {
+            role: "attacker"
+          }
+        });
+      }
+    }    
 
     // Check role array, spawn if below specified count.
     if (butlers.length == 0) {
@@ -236,6 +251,10 @@ module.exports.loop = function () {
       }
       if (creep.memory.role == "pioneer") {
         rolePioneer.run(creep);
+        continue;
+      }
+      if (creep.memory.role == "attacker") {
+        roleAttacker.run(creep);
         continue;
       }
     }
