@@ -27,237 +27,236 @@ profiler.enable();
 module.exports.loop = function () {
   profiler.wrap(function() {
 
-  /*TODO*
-  *** Check if MemoryPathing broke resource pickup from ground
-  *** Wipe old containers from memory if they die.
-  *** Check how miners are spawned and not limited by haulers as when starting miners will be more (building containers for hauler spawn)
-  *** If get stuck do normal move
-  ** Creeps get from storage > container > source
-  ** Dynamic creep size spawning
-  ** Miners to place/build container and add id to memory. (Needs work part)
-  ** Upgrader if storage.rangeTo(Upgrader) > 4 then Build Link (Or spawn with MOVE/CARRY parts? untill link?)
-  ** Haulers to build Roads
-   * while above ~50% storage spawn super || multiple upgraders?
-   * find resource(not in mem), add to mem, if hauler.xy close to mem.xy & !carryCapacity, pickup, continue
-   * breakup main into different modules (spawner etc)
-   * Optimise vars to .deserialize from memory if possible, if not do find then .serialize to memory.
-   * .serializePath && .deserializePath - if memory false -> Do findClosestByPath -> serialize to memory ->
-                                          creep.move via memory -> at error || end = clear memory
-  */
+    /*TODO*
+    *** Check if MemoryPathing broke resource pickup from ground
+    *** Wipe old containers from memory if they die.
+    *** Check how miners are spawned and not limited by haulers as when starting miners will be more (building containers for hauler spawn)
+    *** If get stuck do normal move
+    ** Creeps get from storage > container > source
+    ** Dynamic creep size spawning
+    ** Miners to place/build container and add id to memory. (Needs work part)
+    ** Upgrader if storage.rangeTo(Upgrader) > 4 then Build Link (Or spawn with MOVE/CARRY parts? untill link?)
+    ** Haulers to build Roads
+     * while above ~50% storage spawn super || multiple upgraders?
+     * find resource(not in mem), add to mem, if hauler.xy close to mem.xy & !carryCapacity, pickup, continue
+     * breakup main into different modules (spawner etc)
+     * Optimise vars to .deserialize from memory if possible, if not do find then .serialize to memory.
+     * .serializePath && .deserializePath - if memory false -> Do findClosestByPath -> serialize to memory ->
+                                            creep.move via memory -> at error || end = clear memory
+    */
 
-  // Clear memory of old creeps.
-  for (var name in Memory.creeps) {
-    if (!Game.creeps[name]) {
-      delete Memory.creeps[name];
-      console.log("Clearing non-existing creep memory: ", name);
+    // Clear memory of old creeps.
+    for (var name in Memory.creeps) {
+      if (!Game.creeps[name]) {
+        delete Memory.creeps[name];
+        console.log("Clearing non-existing creep memory: ", name);
+      }
     }
-  }
 
 
-  // Multi room - run code on each room
-  for (var spawnName in Game.spawns) {
-    var spawn = Game.spawns[spawnName]
-    var spawnRoomCreeps = spawn.room.find(FIND_MY_CREEPS)
-    // Create array of each creep role.
-    var harvesters = _.filter(spawnRoomCreeps, (creep) => creep.memory.role == "harvester");
-    var repairers = _.filter(spawnRoomCreeps, (creep) => creep.memory.role == "repairer");
-    var upgraders = _.filter(spawnRoomCreeps, (creep) => creep.memory.role == "upgrader");
-    var builders = _.filter(spawnRoomCreeps, (creep) => creep.memory.role == "builder");
-    var miners = _.filter(spawnRoomCreeps, (creep) => creep.memory.role == "miner");
-    var haulers = _.filter(spawnRoomCreeps, (creep) => creep.memory.role == "hauler");
-    var butlers = _.filter(spawnRoomCreeps, (creep) => creep.memory.role == "butler");
-    var roomSources = spawn.room.find(FIND_SOURCES);
-    var roomMinerals = spawn.room.find(FIND_MINERALS, { filter : a => a.mineralAmount > 0});
-    var roomAllSources = roomSources.concat(roomMinerals)
-    //roomSources.push(...roomMinerals)
-    var newName;
-    var lastContainer
-    var spawnRoomContainers = spawn.room.name
-    
+    // Multi room - run code on each room
+    for (var spawnName in Game.spawns) {
+      var spawn = Game.spawns[spawnName]
+      var spawnRoomCreeps = spawn.room.find(FIND_MY_CREEPS)
+      // Create array of each creep role.
+      var harvesters = _.filter(spawnRoomCreeps, (creep) => creep.memory.role == "harvester");
+      var repairers = _.filter(spawnRoomCreeps, (creep) => creep.memory.role == "repairer");
+      var upgraders = _.filter(spawnRoomCreeps, (creep) => creep.memory.role == "upgrader");
+      var builders = _.filter(spawnRoomCreeps, (creep) => creep.memory.role == "builder");
+      var miners = _.filter(spawnRoomCreeps, (creep) => creep.memory.role == "miner");
+      var haulers = _.filter(spawnRoomCreeps, (creep) => creep.memory.role == "hauler");
+      var butlers = _.filter(spawnRoomCreeps, (creep) => creep.memory.role == "butler");
+      var roomSources = spawn.room.find(FIND_SOURCES);
+      var roomMinerals = spawn.room.find(FIND_MINERALS, { filter : a => a.mineralAmount > 0});
+      var roomAllSources = roomSources.concat(roomMinerals)
+      //roomSources.push(...roomMinerals)
+      var newName;
+      var lastContainer
+      var spawnRoomContainers = spawn.room.name
 
-    // Check role array, spawn if below specified count.
-    if (butlers.length == 0) {
-      newName = "Butler" + Game.time;
-      console.log("Spawning new butler: " + newName);
-      spawn.spawnCreep([WORK, CARRY, MOVE], newName, {
-        memory: {
-          role: "butler"
+
+      // Check role array, spawn if below specified count.
+      if (butlers.length == 0) {
+        newName = "Butler" + spawn.room.name + Game.time;
+        console.log("Spawning new butler: " + newName);
+        spawn.spawnCreep([WORK, CARRY, MOVE], newName, {
+          memory: {
+            role: "butler"
+          }
+        });
+
+      } else if (miners.length < 1 || (miners.length < roomAllSources.length && haulers.length > 0)) {
+        for (var source of roomAllSources) {
+          let filteredCreep = _.filter(Game.creeps, (creep) => creep.memory.minerSource == source.id);
+          if (filteredCreep != "") {
+            continue;
+          } else if (roomMinerals != "" && source.id == roomMinerals[0].id) {
+            newName = "Mineral Miner" + spawn.room.name + Game.time;
+            console.log("This source has no creep: " + source + "\nSpawning new mineral miner: " + newName);
+            spawn.spawnCreep([WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE, MOVE, MOVE], newName, {
+              memory: {
+                role: "miner",
+                minerSource: source.id
+              }
+            });
+            break;
+          } else {
+            newName = "Miner" + spawn.room.name + Game.time;
+            console.log("This source has no creep: " + source + "\nSpawning new miner: " + newName);
+            spawn.spawnCreep([WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE], newName, {
+              memory: {
+                role: "miner",
+                minerSource: source.id
+              }
+            });
+            break;
+          }
         }
-      });
+      } else if (Memory.containersTest[spawnRoomContainers] && haulers.length < Memory.containersTest[spawnRoomContainers].length) {
+        for (var container of Memory.containersTest[spawnRoomContainers]) {
+            if (lastContainer == container) {
+              console.log("DUPE")
+            }
+          if (lastContainer == container || _.filter(Game.creeps, (creep) => creep.memory.role == "hauler" && creep.memory.haulerSource == container) == "") {
+            newName = "Hauler" + spawn.room.name + Game.time;
+            console.log("Haulers: " + haulers.length + "\nSpawning new hauler: " + newName + "\nFor container : " + container);
+            spawn.spawnCreep([WORK, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], newName, {
+              memory : {
+                role : "hauler",
+                haulerSource : container
+              }
+            });
+            break;
+          } else {
+            continue;
+          }
+          //lastContainer = container
+        }
+      } else if (upgraders.length < 1) {
+        newName = "Upgrader" + spawn.room.name + Game.time;
+        console.log("Upgraders: " + upgraders.length + "\nSpawning new upgrader: " + newName);
+        spawn.spawnCreep([WORK, WORK, WORK, WORK, CARRY, MOVE], newName, {
+          memory: {
+            role: "upgrader"
+          }
+        });
+      } else if (repairers.length < 1) {
+        newName = "Repairer" + spawn.room.name + Game.time;
+        console.log("repairer: " + repairers.length + "\nSpawning new repairer: " + newName);
+        spawn.spawnCreep([WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], newName, {
+          memory: {
+            role: "repairer"
+          }
+        });
+      } else if (builders.length < 1 || (builders.length <= spawn.room.find(FIND_CONSTRUCTION_SITES).length / 10)) {
+        newName = "Builder" + spawn.room.name + Game.time;
+        console.log("Builders: " + builders.length + "\nSpawning new builder: " + newName);
+        spawn.spawnCreep([WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE], newName, {
+          memory: {
+            role: "builder"
+          }
+        });
+      }
 
-    } else if (miners.length < 1 || (miners.length < roomAllSources.length && haulers.length > 0)) {
-      for (var source of roomAllSources) {
-        let filteredCreep = _.filter(Game.creeps, (creep) => creep.memory.minerSource == source.id);
-        if (filteredCreep != "") {
-          continue;
-        } else if (roomMinerals != "" && source.id == roomMinerals[0].id) {
-          newName = "Mineral Miner" + Game.time;
-          console.log("This source has no creep: " + source + "\nSpawning new mineral miner: " + newName);
-          spawn.spawnCreep([WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE, MOVE, MOVE], newName, {
+      // Check for claimer flag
+      else if (!isEmpty(Game.flags) && Game.flags.claimFlag) {
+        var claimers = _.filter(Game.creeps, (creep) => creep.memory.role == "claimer");
+        if (claimers.length == 0) {
+          newName = "Claimer" + spawn.room.name + Game.time;
+          console.log("Spawning new claimer: " + newName);
+          spawn.spawnCreep([CLAIM, MOVE], newName, {
             memory: {
-              role: "miner",
-              minerSource: source.id
+              role: "claimer"
             }
           });
-          break;
-        } else {
-          newName = "Miner" + Game.time;
-          console.log("This source has no creep: " + source + "\nSpawning new miner: " + newName);
-          spawn.spawnCreep([WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE], newName, {
-            memory: {
-              role: "miner",
-              minerSource: source.id
-            }
-          });
-          break;
         }
       }
-    } else if (Memory.containersTest[spawnRoomContainers] && haulers.length < Memory.containersTest[spawnRoomContainers].length) {
-      for (var container of Memory.containersTest[spawnRoomContainers]) {
-          if (lastContainer == container) {
-            console.log("DUPE")
-          }
-        if (lastContainer == container || _.filter(Game.creeps, (creep) => creep.memory.role == "hauler" && creep.memory.haulerSource == container) == "") {
-          newName = "Hauler" + Game.time;
-          console.log("Haulers: " + haulers.length + "\nSpawning new hauler: " + newName + "\nFor container : " + container);
-          spawn.spawnCreep([WORK, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], newName, {
-            memory : {
-              role : "hauler",
-              haulerSource : container
+
+      // Check for pioneer flag
+      else if (!isEmpty(Game.flags) && Game.flags.pioneerFlag) {
+        var pioneers = _.filter(Game.creeps, (creep) => creep.memory.role == "pioneer");
+        if (pioneers.length < 2) {
+          newName = "Pioneer" + spawn.room.name + Game.time;
+          console.log("Spawning new pioneer: " + newName);
+          spawn.spawnCreep([WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE], newName, {
+            memory: {
+              role: "pioneer"
             }
           });
-          break;
-        } else {
+        }
+      }
+
+      // Check for attacker flag
+      else if (!isEmpty(Game.flags) && Game.flags.attackerFlag) {
+        var attackers = _.filter(Game.creeps, (creep) => creep.memory.role == "attacker");
+        if (attackers.length < 3) {
+          newName = "Attacker" + spawn.room.name + Game.time;
+          console.log("Spawning new attacker: " + newName);
+          spawn.spawnCreep([MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, MOVE, MOVE, HEAL ], newName, {
+            memory: {
+              role: "attacker"
+            }
+          });
+        }
+      }
+      //Spawning dialog.
+      if (spawn.spawning) {
+        var spawningCreep = Game.creeps[spawn.spawning.name];
+        spawn.room.visual.text(
+          "\u2692" + spawningCreep.memory.role,
+          spawn.pos.x + 1,
+          spawn.pos.y, {
+            align: "left",
+            opacity: 0.8
+          });
+      }
+
+      // Creep AI
+      for (var name in Game.creeps) {
+        var creep = Game.creeps[name];
+        var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
+        if (creep.memory.role == "butler") {
+          roleButler.run(creep);
           continue;
         }
-        //lastContainer = container
-      }
-    } else if (upgraders.length < 1) {
-      newName = "Upgrader" + Game.time;
-      console.log("Upgraders: " + upgraders.length + "\nSpawning new upgrader: " + newName);
-      spawn.spawnCreep([WORK, WORK, WORK, WORK, CARRY, MOVE], newName, {
-        memory: {
-          role: "upgrader"
+        if (creep.memory.role == "upgrader") {
+          roleUpgrader.run(creep);
+          continue;
         }
-      });
-    } else if (repairers.length < 1) {
-      newName = "Repairer" + Game.time;
-      console.log("repairer: " + repairers.length + "\nSpawning new repairer: " + newName);
-      spawn.spawnCreep([WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], newName, {
-        memory: {
-          role: "repairer"
+        if (creep.memory.role == "builder") {
+          roleBuilder.run(creep);
+          continue;
         }
-      });
-    } else if (builders.length < 1 || (builders.length <= spawn.room.find(FIND_CONSTRUCTION_SITES).length / 10)) {
-      newName = "Builder" + Game.time;
-      console.log("Builders: " + builders.length + "\nSpawning new builder: " + newName);
-      spawn.spawnCreep([WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE], newName, {
-        memory: {
-          role: "builder"
+        if (creep.memory.role == "repairer") {
+          roleRepairer.run(creep);
+          continue;
         }
-      });
-    }
-    
-    // Check for claimer flag
-    else if (!isEmpty(Game.flags) && Game.flags.claimFlag) {
-      var claimers = _.filter(Game.creeps, (creep) => creep.memory.role == "claimer");
-      if (claimers.length == 0) {
-        newName = "Claimer" + Game.time;
-        console.log("Spawning new claimer: " + newName);
-        spawn.spawnCreep([CLAIM, MOVE], newName, {
-          memory: {
-            role: "claimer"
-          }
-        });
+        if (creep.memory.role == "miner") {
+          roleMiner.run(creep);
+          continue;
+        }
+        if (creep.memory.role == "hauler") {
+          roleHauler.run(creep);
+          continue;
+        }
+        if (creep.memory.role == "claimer") {
+          roleClaimer.run(creep);
+          continue;
+        }
+        if (creep.memory.role == "pioneer") {
+          rolePioneer.run(creep);
+          continue;
+        }
+        if (creep.memory.role == "attacker") {
+          roleAttacker.run(creep);
+          continue;
+        }
       }
     }
-    
-    // Check for pioneer flag
-    else if (!isEmpty(Game.flags) && Game.flags.pioneerFlag) {
-      var pioneers = _.filter(Game.creeps, (creep) => creep.memory.role == "pioneer");
-      if (pioneers.length < 2) {
-        newName = "Pioneer" + Game.time;
-        console.log("Spawning new pioneer: " + newName);
-        spawn.spawnCreep([WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE], newName, {
-          memory: {
-            role: "pioneer"
-          }
-        });
-      }
-    }
-    
-    // Check for attacker flag
-    else if (!isEmpty(Game.flags) && Game.flags.attackerFlag) {
-      var attackers = _.filter(Game.creeps, (creep) => creep.memory.role == "attacker");
-      if (attackers.length < 3) {
-        newName = "Attacker" + Game.time;
-        console.log("Spawning new attacker: " + newName);
-        spawn.spawnCreep([MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, MOVE, MOVE, HEAL ], newName, {
-          memory: {
-            role: "attacker"
-          }
-        });
-      }
-    }
-    //Spawning dialog.
-    if (spawn.spawning) {
-      var spawningCreep = Game.creeps[spawn.spawning.name];
-      spawn.room.visual.text(
-        "\u2692" + spawningCreep.memory.role,
-        spawn.pos.x + 1,
-        spawn.pos.y, {
-          align: "left",
-          opacity: 0.8
-        });
-    }
-
     // Tower AI
     var towers = _.filter(Game.structures, s => s.structureType == STRUCTURE_TOWER);
     for (var tower of towers) {
       roleTower.run(tower);
     }
-
-    // Creep AI
-    for (var name in Game.creeps) {
-      var creep = Game.creeps[name];
-      var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
-      if (creep.memory.role == "butler") {
-        roleButler.run(creep);
-        continue;
-      }
-      if (creep.memory.role == "upgrader") {
-        roleUpgrader.run(creep);
-        continue;
-      }
-      if (creep.memory.role == "builder") {
-        roleBuilder.run(creep);
-        continue;
-      }
-      if (creep.memory.role == "repairer") {
-        roleRepairer.run(creep);
-        continue;
-      }
-      if (creep.memory.role == "miner") {
-        roleMiner.run(creep);
-        continue;
-      }
-      if (creep.memory.role == "hauler") {
-        roleHauler.run(creep);
-        continue;
-      }
-      if (creep.memory.role == "claimer") {
-        roleClaimer.run(creep);
-        continue;
-      }
-      if (creep.memory.role == "pioneer") {
-        rolePioneer.run(creep);
-        continue;
-      }
-      if (creep.memory.role == "attacker") {
-        roleAttacker.run(creep);
-        continue;
-      }
-    }
-  }
   });
 };
