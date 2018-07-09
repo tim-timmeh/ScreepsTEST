@@ -17,7 +17,7 @@ var roleMiner = {
     } else if (!Memory.containers[creepRoomName]) {
       Memory.containers[creepRoomName] = [];
     } else if ((structures != undefined && structures != "") && Memory.containers[creepRoomName].indexOf(structures[0].id) == -1) {
-      Memory.containers.push(structures[0].id);
+      Memory.containers[creepRoomName].push(structures[0].id);
     }
   }
 };
