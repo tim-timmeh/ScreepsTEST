@@ -159,7 +159,7 @@ module.exports.loop = function () {
       }
 
       // Check for claimer flag
-      else if (!isEmpty(Game.flags) && Game.flags.claimFlag) {
+      if (!isEmpty(Game.flags) && Game.flags.claimFlag) {
         var claimers = _.filter(Game.creeps, (creep) => creep.memory.role == "claimer");
         if (claimers.length == 0) {
           newName = "Claimer" + Game.time + spawn.room.name;
@@ -173,7 +173,7 @@ module.exports.loop = function () {
       }
 
       // Check for pioneer flag
-      else if (!isEmpty(Game.flags) && Game.flags.pioneerFlag) {
+      if (!isEmpty(Game.flags) && Game.flags.pioneerFlag) {
         var pioneers = _.filter(Game.creeps, (creep) => creep.memory.role == "pioneer");
         if (pioneers.length < 2) {
           newName = "Pioneer" + Game.time + spawn.room.name;
@@ -187,7 +187,7 @@ module.exports.loop = function () {
       }
 
       // Check for attacker flag
-      else if (!isEmpty(Game.flags) && Game.flags.attackerFlag) {
+      if (!isEmpty(Game.flags) && Game.flags.attackerFlag) {
         var attackers = _.filter(Game.creeps, (creep) => creep.memory.role == "attacker");
         if (attackers.length < 3) {
           newName = "Attacker" + Game.time + spawn.room.name;
