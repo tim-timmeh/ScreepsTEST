@@ -21,9 +21,9 @@ var roleButler = {
           return (s.structureType == STRUCTURE_STORAGE);
         }
       });
-      var droppedSource = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1);
+      var droppedSource = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 5);
       if (droppedSource != "" && creep.pickup(droppedSource[0]) == ERR_NOT_IN_RANGE) {
-        creep.moveTo(droppedSource, {
+        creep.moveTo(droppedSource[0], {
           visualizePathStyle: {
             stroke: '#fa0'
           }
