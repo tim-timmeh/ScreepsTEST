@@ -69,7 +69,7 @@ module.exports.loop = function () {
       var roomMinerals = spawn.room.find(FIND_MINERALS, {
         filter: a => a.mineralAmount > 0
       });
-      var roomAllSources = roomSources.concat(roomMinerals);
+      var roomAllSources = roomSources//.concat(roomMinerals);
       //roomSources.push(...roomMinerals)
       var newName;
       var lastContainer;
@@ -200,7 +200,7 @@ module.exports.loop = function () {
       // Check for attacker flag
       if (!isEmpty(Game.flags) && Game.flags.attackerFlag) {
         var attackers = _.filter(Game.creeps, (creep) => creep.memory.role == "attacker");
-        if (attackers.length < 2) {
+        if (attackers.length < 1) {
           newName = "Attacker" + Game.time + spawn.room.name[4];
           console.log("Spawning new attacker: " + newName);
           spawn.spawnCreep([MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, MOVE, MOVE, HEAL], newName, {
