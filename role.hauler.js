@@ -19,7 +19,7 @@ var roleHauler = {
       var haulerSource = Game.getObjectById(creep.memory.haulerSource);
       var droppedSource = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1);
       if (droppedSource != "" && creep.pickup(droppedSource[0]) == ERR_NOT_IN_RANGE) {
-        creep.moveTo(droppedSource, {
+        creep.moveTo(droppedSource[0], {
           visualizePathStyle: {
             stroke: '#fa0'
           }
