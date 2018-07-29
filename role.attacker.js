@@ -9,7 +9,7 @@ var roleAttacker = {
   /** @param {Creep} creep **/
   run: function(creep) {
     attackerFlag = _.filter(Game.flags, f => f.name == "attackerFlag")
-    if (attackerFlag[0] && creep.pos.roomName != attackerFlag[0].pos.roomName) {
+    if (attackerFlag && creep.pos.roomName != attackerFlag[0].pos.roomName) {
      creep.moveToModule(attackerFlag[0].pos)
     } else {
       var enemy = creep.pos.findClosestByPath(FIND_HOSTILE_CREEPS)
