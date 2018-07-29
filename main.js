@@ -71,6 +71,9 @@ module.exports.loop = function () {
       });
       var roomAllSources = roomSources//.concat(roomMinerals);
       //roomSources.push(...roomMinerals)
+      if (spawn.room.find(FIND_MY_STRUCTURES, {filter: e => e.structureType == STRUCTURE_EXTRACTOR}) != "") {
+        roomAllSources = roomSources.concat(roomMinerals);
+      }
       var newName;
       var lastContainer;
       var spawnRoomContainers = spawn.room.name;
