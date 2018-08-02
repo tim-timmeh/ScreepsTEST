@@ -3,23 +3,23 @@ var roleUpgrader = require("role.upgrader");
 var roleBuilder = require("role.builder");
 var rolePioneer = require("role.pioneer");
 require("moveToModule");
-var attackerFlag;
+var tankFlag;
 var enemyRanged;
 var enemyTower;
 var enemyCreep;
 var enemyStructure;
-var roleAttacker = {
+var roletank = {
 
   /** @param {Creep} creep **/
   run: function(creep) {
-    attackerFlag = _.filter(Game.flags, f => f.name == "attackerFlag")
-    if (attackerFlag[0] && creep.pos.roomName != attackerFlag[0].pos.roomName) {
-      creep.moveToModule(attackerFlag[0].pos)
+    tankFlag = _.filter(Game.flags, f => f.name == "tankFlag")
+    if (tankFlag[0] && creep.pos.roomName != tankFlag[0].pos.roomName) {
+      creep.moveToModule(tankFlag[0].pos)
       if (!enemyRanged && !enemyTower && creep.hits < creep.hitsMax) {
         creep.heal(creep)
       }
     } else {
-      enemyRanged = creep.pos.findClosestByRange(FIND_HOSTILE_CREEPS, {filter : c => (c.getActiveBodyparts(RANGED_ATTACK) > 0) || (c.getActiveBodyparts(HEAL) > 0)});
+      enemyRanged = creep.pos.findClosestByRange(FIND_HOSTILE_CREEPS, {filter : c => c.getActiveBodyparts(RANGED_ATTACK) > 0});
       if (enemyRanged) {
         if (creep.attack(enemyRanged) == ERR_NOT_IN_RANGE) {
           creep.moveToModule(enemyRanged);
@@ -48,8 +48,8 @@ var roleAttacker = {
         creep.heal(creep)
       }
         }
-      } else if (attackerFlag[0] && !creep.pos.isNearTo(attackerFlag)) {
-        creep.moveToModule(attackerFlag[0].pos)
+      } else if (tankFlag[0] && !creep.pos.isNearTo(tankFlag)) {
+        creep.moveToModule(tankFlag[0].pos)
       } if (!enemyRanged && !enemyTower && !enemyCreep && creep.hits < creep.hitsMax) {
         creep.heal(creep)
       }
@@ -57,4 +57,5 @@ var roleAttacker = {
   }
 };
 
-module.exports = roleAttacker;
+module.exports = roletank;
+

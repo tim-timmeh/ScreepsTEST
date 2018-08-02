@@ -71,3 +71,4 @@ var rolePioneer = {
 };
 
 module.exports = rolePioneer;
+

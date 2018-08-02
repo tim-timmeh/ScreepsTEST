@@ -14,7 +14,7 @@ var roleBuilder = {
       creep.say("\ud83d\udd28 Build");
     }
     if (creep.memory.building) {
-      var targets = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES);
+      var targets = creep.pos.findClosestByRange(FIND_CONSTRUCTION_SITES);
 
       if (targets) {
         if (creep.build(targets) == ERR_NOT_IN_RANGE) {
@@ -34,7 +34,7 @@ var roleBuilder = {
         if (creep.withdraw(targetsS[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
           creep.moveToModule(targetsS[0]);
         }
-      } else if (creep.harvest(sources = creep.pos.findClosestByPath(FIND_SOURCES)) == ERR_NOT_IN_RANGE) {
+      } else if (creep.harvest(sources = creep.pos.findClosestByRange(FIND_SOURCES)) == ERR_NOT_IN_RANGE) {
         creep.moveToModule(sources);
       }
     }
@@ -42,3 +42,4 @@ var roleBuilder = {
 };
 
 module.exports = roleBuilder;
+
