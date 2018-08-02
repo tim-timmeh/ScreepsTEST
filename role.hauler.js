@@ -30,7 +30,7 @@ var roleHauler = {
     } else {
       var targets;
       if (creep.carry.energy != 0) {
-        targets = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+        targets = creep.pos.findClosestByRange(FIND_STRUCTURES, {
           filter: (s) => {
             return (s.structureType == STRUCTURE_EXTENSION || s.structureType == STRUCTURE_SPAWN) &&
               s.energy < s.energyCapacity;
