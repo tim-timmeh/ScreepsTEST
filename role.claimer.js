@@ -8,7 +8,7 @@ var roleClaimer = {
     claimFlag = _.filter(Game.flags, f => f.name == "claimFlag")
     if (claimFlag[0] && creep.pos.roomName != claimFlag[0].pos.roomName) {
      creep.moveToModule(claimFlag[0].pos);
-    } else if (creep.room.controller.reservation != undefined || creep.room.controller.owner.username != undefined) {
+    } else if (creep.room.controller.reservation != undefined || creep.room.controller.owner != undefined) {
       if (creep.attackController(creep.room.controller) == ERR_NOT_IN_RANGE) {
        creep.moveToModule(creep.room.controller);
       }
@@ -21,3 +21,4 @@ var roleClaimer = {
 };
 
 module.exports = roleClaimer;
+
