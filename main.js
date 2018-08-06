@@ -31,6 +31,9 @@ module.exports.loop = function () {
   profiler.wrap(function () {
 
     /*TODO*
+    ***claimer to change signs
+    ** Research Overmind.
+    
     *** Check if MemoryPathing broke resource pickup from ground
     *** Wipe old containers from memory if they die.
     *** Check how miners are spawned and not limited by haulers as when starting miners will be more (building containers for hauler spawn)
@@ -84,7 +87,7 @@ module.exports.loop = function () {
 
       // Check role array, spawn if below specified count.
       if (butlers.length == 0) {
-        newName = "Butler" + Game.time + spawn.room.name[4];
+        newName = "Butler" + Game.time + spawn.room.name;
         console.log("Butlers: " + spawn.room.name + " - " + butlers.length + "\nSpawning new butler: " + newName);
         spawn.spawnCreep([WORK, CARRY, MOVE], newName, {
           memory: {
@@ -98,7 +101,7 @@ module.exports.loop = function () {
           if (filteredCreep != "") {
             continue;
           } else if (roomMinerals != "" && source.id == roomMinerals[0].id) {
-            newName = "Mineral Miner" + Game.time + spawn.room.name[4];
+            newName = "Mineral Miner" + Game.time + spawn.room.name;
             console.log("This source has no creep: " + spawn.room.name + " - " + source + "\nSpawning new mineral miner: " + newName);
             spawn.spawnCreep([WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE, MOVE, MOVE], newName, {
               memory: {
@@ -108,7 +111,7 @@ module.exports.loop = function () {
             });
             break;
           } else {
-            newName = "Miner" + Game.time + spawn.room.name[4];
+            newName = "Miner" + Game.time + spawn.room.name;
             console.log("This source has no creep: " + spawn.room.name + " - " + source + "\nSpawning new miner: " + newName);
             spawn.spawnCreep([WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE], newName, {
               memory: {
@@ -121,11 +124,8 @@ module.exports.loop = function () {
         }
       } else if (spawn.room.energyCapacityAvailable > 800 && (Memory.containersTest[spawnRoomContainers] && haulers.length < Memory.containersTest[spawnRoomContainers].length)) {
         for (var container of Memory.containersTest[spawnRoomContainers]) {
-          if (lastContainer == container) {
-            console.log("DUPE");
-          }
           if (lastContainer == container || _.filter(Game.creeps, (creep) => creep.memory.role == "hauler" && creep.memory.haulerSource == container) == "") {
-            newName = "Hauler" + Game.time + spawn.room.name[4];
+            newName = "Hauler" + Game.time + spawn.room.name;
             console.log("Haulers: " + spawn.room.name + " - " + haulers.length + "\nSpawning new hauler: " + newName + "\nFor container : " + container);
             spawn.spawnCreep([WORK, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], newName, {
               memory: {
@@ -133,14 +133,16 @@ module.exports.loop = function () {
                 haulerSource: container
               }
             });
+            lastContainer = container;
             break;
           } else {
+            lastContainer = container;
             continue;
           }
           //lastContainer = container
         }
       } else if (upgraders.length < 1) {
-        newName = "Upgrader" + Game.time + spawn.room.name[4];
+        newName = "Upgrader" + Game.time + spawn.room.name;
         console.log("Upgraders: " + spawn.room.name + " - " + upgraders.length + "\nSpawning new upgrader: " + newName);
         spawn.spawnCreep([WORK, WORK, WORK, MOVE, CARRY, MOVE], newName, {
           memory: {
@@ -149,7 +151,7 @@ module.exports.loop = function () {
         });
       } else if (repairers.length < 1) {
         if (spawn.room.energyCapacityAvailable <= 550) {
-          newName = "Repairer" + Game.time + spawn.room.name[4];
+          newName = "Repairer" + Game.time + spawn.room.name;
           console.log("repairer: " + spawn.room.name + " - " + repairers.length + "\nSpawning new repairer: " + newName);
           spawn.spawnCreep([WORK, WORK, CARRY, CARRY, MOVE, MOVE], newName, {
             memory: {
@@ -157,7 +159,7 @@ module.exports.loop = function () {
             }
           });
         } else {
-          newName = "Repairer" + Game.time + spawn.room.name[4];
+          newName = "Repairer" + Game.time + spawn.room.name;
           console.log("repairer: " + spawn.room.name + " - " + repairers.length + "\nSpawning new repairer: " + newName);
           spawn.spawnCreep([WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], newName, {
             memory: {
@@ -166,9 +168,9 @@ module.exports.loop = function () {
           });
         }
       } else if (spawn.room.energyCapacityAvailable > 800 && (builders.length < 1 || (builders.length <= spawn.room.find(FIND_CONSTRUCTION_SITES).length / 10))) {
-        newName = "Builder" + Game.time + spawn.room.name[4];
+        newName = "Builder" + Game.time + spawn.room.name;
         console.log("Builders: " + spawn.room.name + " - " + builders.length + "\nSpawning new builder: " + newName);
-        spawn.spawnCreep([WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE], newName, {
+        spawn.spawnCreep([WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE], newName, {
           memory: {
             role: "builder"
           }
@@ -179,7 +181,7 @@ module.exports.loop = function () {
       if (!isEmpty(Game.flags) && Game.flags.claimFlag) {
         var claimers = _.filter(Game.creeps, (creep) => creep.memory.role == "claimer");
         if (claimers.length == 0) {
-          newName = "Claimer" + Game.time + spawn.room.name[4];
+          newName = "Claimer" + Game.time + spawn.room.name;
           console.log("Spawning new claimer: " + newName);
           spawn.spawnCreep([CLAIM, MOVE], newName, {
             memory: {
@@ -192,8 +194,8 @@ module.exports.loop = function () {
       // Check for pioneer flag
       if (!isEmpty(Game.flags) && Game.flags.pioneerFlag) {
         var pioneers = _.filter(Game.creeps, (creep) => creep.memory.role == "pioneer");
-        if (pioneers.length < 2) {
-          newName = "Pioneer" + Game.time + spawn.room.name[4];
+        if (pioneers.length < 3) {
+          newName = "Pioneer" + Game.time + spawn.room.name;
           console.log("Spawning new pioneer: " + newName);
           spawn.spawnCreep([WORK, CARRY, MOVE, MOVE, WORK, CARRY, MOVE, MOVE, WORK, CARRY, MOVE, MOVE, WORK, CARRY, MOVE, MOVE, WORK, CARRY, MOVE, MOVE, WORK, CARRY, MOVE, MOVE, WORK, CARRY, MOVE, MOVE, WORK, CARRY, MOVE, MOVE, WORK, CARRY, MOVE, MOVE], newName, {
             memory: {
@@ -207,7 +209,7 @@ module.exports.loop = function () {
       if (!isEmpty(Game.flags) && Game.flags.attackerFlag) {
         var attackers = _.filter(Game.creeps, (creep) => creep.memory.role == "attacker");
         if (attackers.length < 1) {
-          newName = "Attacker" + Game.time + spawn.room.name[4];
+          newName = "Attacker" + Game.time + spawn.room.name;
           console.log("Spawning new attacker: " + newName);
           spawn.spawnCreep([MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, MOVE, MOVE, HEAL], newName, {
           //spawn.spawnCreep([MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, MOVE, MOVE, HEAL], newName, {
@@ -222,7 +224,7 @@ module.exports.loop = function () {
       if (!isEmpty(Game.flags) && Game.flags.tankFlag) {
         var tanks = _.filter(Game.creeps, (creep) => creep.memory.role == "tank");
         if (tanks.length < 1) {
-          newName = "Tank" + Game.time + spawn.room.name[4];
+          newName = "Tank" + Game.time + spawn.room.name;
           console.log("Spawning new Tank: " + newName);
           //spawn.spawnCreep([MOVE], newName, {
           spawn.spawnCreep([MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, MOVE, MOVE, HEAL], newName, {
@@ -238,7 +240,7 @@ module.exports.loop = function () {
       if (!isEmpty(Game.flags) && Game.flags.defenderFlag) {
         var defender = _.filter(Game.creeps, (creep) => creep.memory.role == "defender");
         if (defender.length < 1) {
-          newName = "Defender" + Game.time + spawn.room.name[4];
+          newName = "Defender" + Game.time + spawn.room.name;
           console.log("Spawning new Defender: " + newName);
           //spawn.spawnCreep([MOVE], newName, {
           spawn.spawnCreep([MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, MOVE, MOVE, HEAL], newName, {
@@ -254,7 +256,7 @@ module.exports.loop = function () {
       if (!isEmpty(Game.flags) && Game.flags.healerFlag) {
         var healer = _.filter(Game.creeps, (creep) => creep.memory.role == "healer");
         if (healer.length < 3) {
-          newName = "Healer" + Game.time + spawn.room.name[4];
+          newName = "Healer" + Game.time + spawn.room.name;
           console.log("Spawning new Healer: " + newName);
           spawn.spawnCreep([TOUGH, TOUGH, TOUGH, TOUGH, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, HEAL, HEAL, HEAL, HEAL, HEAL, HEAL, HEAL, HEAL, HEAL, HEAL, MOVE, MOVE], newName, {
             memory: {
