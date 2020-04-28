@@ -33,7 +33,7 @@ module.exports.loop = function () {
     /*TODO*
     ***claimer to change signs
     ** Research Overmind.
-    
+
     *** Check if MemoryPathing broke resource pickup from ground
     *** Wipe old containers from memory if they die.
     *** Check how miners are spawned and not limited by haulers as when starting miners will be more (building containers for hauler spawn)
@@ -219,7 +219,7 @@ module.exports.loop = function () {
           });
         }
       }
-      
+
       // Check tank flag
       if (!isEmpty(Game.flags) && Game.flags.tankFlag) {
         var tanks = _.filter(Game.creeps, (creep) => creep.memory.role == "tank");
@@ -339,4 +339,3 @@ module.exports.loop = function () {
     }
   });
 };
-
