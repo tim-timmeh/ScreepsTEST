@@ -1,7 +1,7 @@
 "use strict";
 require("moveToModule");
 var claimFlag
-var roleClaimer = {
+var missClaimer = {
 
   /** @param {Creep} creep **/
   run: function(creep) {
@@ -20,5 +20,5 @@ var roleClaimer = {
   }
 };
 
-module.exports = roleClaimer;
+module.exports = missClaimer;
 

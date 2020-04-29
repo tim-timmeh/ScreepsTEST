@@ -1,9 +1,9 @@
 "use strict";
-var roleUpgrader = require("role.upgrader");
-var roleBuilder = require("role.builder");
+var missUpgrader = require("miss.upgrader");
+var missBuilder = require("miss.builder");
 require("moveToModule");
 var pioneerFlag;
-var rolePioneer = {
+var missPioneer = {
 
   /** @param {Creep} creep **/
   run: function(creep) {
@@ -63,12 +63,12 @@ var rolePioneer = {
             creep.moveToModule(targetsT[0]);
           }
         } else {
-          roleBuilder.run(creep);
+          missBuilder.run(creep);
         }
       }
     }
   }
 };
 
-module.exports = rolePioneer;
+module.exports = missPioneer;
 

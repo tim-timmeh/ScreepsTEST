@@ -1,6 +1,6 @@
 "use strict";
-var roleUpgrader = require("role.upgrader");
-var roleButler = {
+var missUpgrader = require("miss.upgrader");
+var missButler = {
 
   /** @param {Creep} creep **/
   run: function(creep) {
@@ -57,10 +57,10 @@ var roleButler = {
           creep.moveToModule(targetsT[0]);
         }
       } else {
-        roleUpgrader.run(creep);
+        missUpgrader.run(creep);
       }
     }
   }
 };
 
-module.exports = roleButler;
+module.exports = missButler;

@@ -1,6 +1,6 @@
 "use strict"
-var roleUpgrader = require("role.upgrader");
-var roleHarvester = {
+var missUpgrader = require("miss.upgrader");
+var missHarvester = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
@@ -45,10 +45,10 @@ var roleHarvester = {
                     creep.moveTo(targetsT[0], {visualizePathStyle: {stroke: "#fff"}});
                 }
             } else {
-                roleUpgrader.run(creep)
+                missUpgrader.run(creep)
             }
         }
     }
 };
 
-module.exports = roleHarvester;
+module.exports = missHarvester;

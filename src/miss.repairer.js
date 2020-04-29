@@ -1,7 +1,7 @@
 "use strict";
 require("moveToModule");
-var roleBuilder = require("role.builder");
-var roleRepairer = {
+var missBuilder = require("miss.builder");
+var missRepairer = {
 
   /** @param {Creep} creep **/
   run: function(creep) {
@@ -34,7 +34,7 @@ var roleRepairer = {
           creep.moveToModule(targetsRepair);
         }
       } else {
-        roleBuilder.run(creep);
+        missBuilder.run(creep);
       }
     } else {
       var sources;
@@ -54,5 +54,5 @@ var roleRepairer = {
   }
 };
 
-module.exports = roleRepairer;
+module.exports = missRepairer;
 

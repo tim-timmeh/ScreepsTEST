@@ -1,6 +1,6 @@
 "use strict";
 require("moveToModule")
-var roleMiner = {
+var missMiner = {
   run: function(creep) {
     var source = Game.getObjectById(creep.memory.minerSource);
     var creepRoomName = creep.room.name
@@ -21,4 +21,4 @@ var roleMiner = {
     }
   }
 };
-module.exports = roleMiner;
+module.exports = missMiner;

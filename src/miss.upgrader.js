@@ -1,6 +1,6 @@
 "use strict";
 require("moveToModule");
-var roleUpgrader = {
+var missUpgrader = {
 
   /** @param {Creep} creep **/
   run: function(creep) {
@@ -34,5 +34,5 @@ var roleUpgrader = {
   }
 };
 
-module.exports = roleUpgrader;
+module.exports = missUpgrader;
 

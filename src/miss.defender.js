@@ -1,14 +1,14 @@
 "use strict";
-var roleUpgrader = require("role.upgrader");
-var roleBuilder = require("role.builder");
-var rolePioneer = require("role.pioneer");
+var missUpgrader = require("miss.upgrader");
+var missBuilder = require("miss.builder");
+var missPioneer = require("miss.pioneer");
 require("moveToModule");
 var defenderFlag;
 var enemyRanged;
 var enemyTower;
 var enemyCreep;
 var enemyStructure;
-var roledefender = {
+var missdefender = {
 
   /** @param {Creep} creep **/
   run: function(creep) {
@@ -57,4 +57,4 @@ var roledefender = {
   }
 };
 
-module.exports = roledefender;
+module.exports = missdefender;

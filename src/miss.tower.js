@@ -1,7 +1,7 @@
 "use strict"
 //* Target creeps without tough first?
 
-var roleTower = {
+var missTower = {
 
 	run: function(tower) {
 		var enemy = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
@@ -27,5 +27,5 @@ var roleTower = {
 	}
 };
 
-module.exports = roleTower;
+module.exports = missTower;
 
