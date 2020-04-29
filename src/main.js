@@ -144,16 +144,16 @@ module.exports.loop = function () {
       } else if (upgraders.length < 1) {
         newName = "Upgrader" + Game.time + spawn.room.name;
         console.log("Upgraders: " + spawn.room.name + " - " + upgraders.length + "\nSpawning new upgrader: " + newName);
-        spawn.spawnCreep([WORK, WORK, WORK, MOVE, CARRY, MOVE], newName, {
+        spawn.spawnCreep([WORK, WORK, CARRY, MOVE], newName, {
           memory: {
             role: "upgrader"
           }
         });
       } else if (repairers.length < 1) {
-        if (spawn.room.energyCapacityAvailable <= 550) {
+        if (spawn.room.energyCapacityAvailable <= 300) {
           newName = "Repairer" + Game.time + spawn.room.name;
           console.log("repairer: " + spawn.room.name + " - " + repairers.length + "\nSpawning new repairer: " + newName);
-          spawn.spawnCreep([WORK, WORK, CARRY, CARRY, MOVE, MOVE], newName, {
+          spawn.spawnCreep([WORK, WORK, CARRY, MOVE], newName, {
             memory: {
               role: "repairer"
             }
