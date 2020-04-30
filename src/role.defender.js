@@ -37,9 +37,9 @@ var roledefender = {
       } else if ((enemyCreep = creep.pos.findClosestByPath(FIND_HOSTILE_CREEPS))) {
         if (creep.attack(enemyCreep) == ERR_NOT_IN_RANGE) {
           creep.moveToModule(enemyCreep);
-          if (creep.hits < creep.hitsMax) {
-        creep.heal(creep)
-      }
+          //if (creep.hits < creep.hitsMax) {
+        //creep.heal(creep)
+      //}
         }
       } else if ((enemyStructure = creep.pos.findClosestByPath(FIND_HOSTILE_STRUCTURES, {filter: s => s.structureType != STRUCTURE_CONTROLLER}))) {
         if (creep.attack(enemyStructure) == ERR_NOT_IN_RANGE) {

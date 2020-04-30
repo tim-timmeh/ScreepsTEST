@@ -1,5 +1,5 @@
 "use strict";
-var roleUpgrader = require("role.upgrader");
+var roleBuilder = require("role.builder");
 var roleButler = {
 
   /** @param {Creep} creep **/
@@ -57,7 +57,7 @@ var roleButler = {
           creep.moveToModule(targetsT[0]);
         }
       } else {
-        roleUpgrader.run(creep);
+        roleBuilder.run(creep);
       }
     }
   }
