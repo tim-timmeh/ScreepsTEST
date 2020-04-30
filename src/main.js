@@ -2,6 +2,9 @@
 require('config'); // Custom config here
 require('globals'); // Global Variables
 require('prototypes'); // Modified Prototypes
+require('king') // king constructor
+var queen = require('queen'); // Import Functions
+var myFunc = require('myfunctions'); // Import Functions
 var spawner = require('spawner'); // spawner logic
 var creepAI = require('creepAI'); // creep logic
 var towerAI = require('towerAI'); // tower logic
@@ -48,6 +51,24 @@ module.exports.loop = function () {
       }
     }
 
+    // Init Phase
+    let king = queen.initKing() // Creates king Object
+    let operations = queen.getOperations(king) // Get list of Operation Flags
+    for (let operation of operations) { // Loop through all Operation Objects
+      operation.init() // Instantiate all of operations missions
+    }
+    // Rolecall Phase
+    for (let operation of operations) { // Loop through all Operation Objects
+      operation.rolecall() // Instantiate all of operations missions
+    }
+    // Action Phase
+    for (let operation of operations) { // Loop through all Operation Objects
+      operation.action() // Instantiate all of operations missions
+    }
+    // Finalize Phase
+    for (let operation of operations) { // Loop through all Operation Objects
+      operation.finalize() // Instantiate all of operations missions
+    }
     spawner(); // Spawner Logic
 
     creepAI(); // Creep Logic

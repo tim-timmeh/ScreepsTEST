@@ -31,6 +31,8 @@ module.exports = {
       }
   },
 
+
+
   //----- Using room.prototype.sources instead.
   // addRoomSources: function (visableRoom){
   //   let sources = visableRoom.find(FIND_SOURCES);
@@ -45,7 +47,7 @@ module.exports = {
   //   return obj
   // }
 
-  exportStats:function () { // Sets Memory.stats for populating screepspl.us graph
+  exportStats : function () { // Sets Memory.stats for populating screepspl.us graph
     // Reset stats object
     Memory.stats = {
       gcl: {},
