@@ -2,7 +2,7 @@
 require('config'); // Custom config here
 require('globals'); // Global Variables
 require('prototypes'); // Modified Prototypes
-require('king') // king constructor
+require('King') // king constructor
 var queen = require('queen'); // Import Functions
 var myFunc = require('myfunctions'); // Import Functions
 var spawner = require('spawner'); // spawner logic

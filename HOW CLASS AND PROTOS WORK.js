@@ -80,13 +80,13 @@ Animal.prototype.wakeUp = function() {
 
 
 function Gorilla(name, weight) {
-    Animal.call(this, name, weight);
+    Animal.call(this, name, weight); // uses params to pass object through animal constructor first
 }
 
-Gorilla.prototype = Object.create(Animal.prototype);
-Gorilla.prototype.constructor = Gorilla;
+Gorilla.prototype = Object.create(Animal.prototype); // makes gorilla protos animals protos
+Gorilla.prototype.constructor = Gorilla; // reset constructor to gorilla, or else constructor is animal
 
-Gorilla.prototype.climbTrees = function () {
+Gorilla.prototype.climbTrees = function () { // add gorilla protos, which already have animal protos now
     return `${this.name} is climbing trees!`;
 }
 

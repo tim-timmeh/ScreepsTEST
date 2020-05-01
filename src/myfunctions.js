@@ -21,16 +21,23 @@ module.exports = {
     return true;
   },
 
-  ensureMemTreeObj: function(fn,defaultVal) {
-      try {
-        return fn(); // will exit if parent exists
-      } catch (e) { // will create tree if parent does not exist
-        if(global.debug)console.log(`  #Setting Memory Tree: Memory.${defaultVal}`);
-        _.set(Memory, defaultVal,{});
-        return  _.get(Memory,defaultVal)
-      }
+  ensureMemTreeObj: function(fn,defaultVal) { // Pass Memory location as function, will return if exists, will create if error
+    try {
+      return fn(); // will exit if parent exists
+    } catch { // will create tree if parent does not exist
+      if(global.debug)console.log(`  #Setting Memory Tree: Memory.${defaultVal}`);
+      _.set(Memory, defaultVal,{});
+      return  _.get(Memory,defaultVal)
+    }
   },
 
+  tryWrap : function (fn,description = 'Nondescript Error, posting stack') { // wrap any function in a try/catch to let code keep running around error
+    try {
+      return fn(); // try to do function. (Not sure if to use return or not?)
+    } catch (e) {
+      console.log(`${description}\n${e.stack}`) // if error console log stack at error
+    }
+  },
 
 
   //----- Using room.prototype.sources instead.

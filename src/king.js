@@ -1,24 +1,24 @@
 'use strict'
 
-function king() { // constructor, how to build the object
+function King() { // constructor, how to build the object
 
 }
-king.prototype.init = function () { // Initialize / build objects required
+King.prototype.init = function () { // Initialize / build objects required
 
 };
-king.prototype.rolecall = function () { // perform rolecall on required creeps spawn if needed
+King.prototype.rolecall = function () { // perform rolecall on required creeps spawn if needed
 
 };
-king.prototype.action = function () { // perform actions / missions
+King.prototype.action = function () { // perform actions / missions
 
 };
-king.prototype.finalize = function () { // finalize?
+King.prototype.finalize = function () { // finalize?
 
 };
 
 // Additional methods/functions below
 
-king.prototype.getSpawnGroup = function (roomName) {
+King.prototype.getSpawnGroup = function (roomName) {
         if (this.spawnGroups[roomName]) {
             return this.spawnGroups[roomName];
         }

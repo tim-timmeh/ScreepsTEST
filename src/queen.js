@@ -1,14 +1,15 @@
 'use strict'
-require('op.Base');
+require('Op.Base');
+var myFunc = require('myFunctions');
 
 const operationTypes = {
-  55:operationBase, // Green, Green
+  55:OperationBase, // Green, Green
 }
 // Functions for setting up Object heirachy
 module.exports = {
 
   initKing : function () {
-    let king = new king()
+    let king = new King()
     king.init()
     return king
   },
@@ -23,21 +24,18 @@ module.exports = {
           let operationType = operationTypes[opCode];
           let flag = Game.flags[flagName];
           let operation;
-          try {
-            operation = new operationType(flag, flagName, opCode, king); // flag = obj, flagName = strign, opCode = objkey, king = object.
-          }
-          catch (e) {
-            console.log("Error generating operation from flag");
-            console.log(e);
-          }
-
+          // First one will not change anything if failed, second one will return/change variable to undefined
+          myFunc.tryWrap(() => { // try/catch wrapper function
+            operation = new operationType(flag, flagName, opCode, king) // what to try
+          },'Error generating operation from flag') // custom error message before stack error message
+          //operation = myFunc.tryWrap(()=> new operationType(flag, flagName, opCode, king),'Error generating operation from flag')
           operationList[flagName] = operation;
-
           //global[flagName] = operation; //Need to check what this is for, do i need it?
         } else {
           console.log('Error in Operation / flag matchup - ' + opCode + flagType)
         }
       }
-    }
+    };
+    return _.sortBy(operationList, (op) => op.priority);
   },
 };
