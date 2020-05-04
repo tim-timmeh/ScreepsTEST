@@ -1,66 +1,23 @@
-"use strict";
-var missUpgrader = require("miss.upgrader");
-var missButler = {
+'use strict'
 
-  /** @param {Creep} creep **/
-  run: function(creep) {
+function MissionButler(operation) { // constructor, how to build the object
+  Mission.call(operation,'Mission Butler')
+}
 
-    if (creep.memory.building && creep.carry.energy == 0) {
-      creep.memory.building = false;
-      creep.say("Hmm");
-    }
-    if (!creep.memory.building && creep.carry.energy == creep.carryCapacity) {
-      creep.memory.building = true;
-      creep.say("Urg");
-    }
+MissionButler.prototype = Object.create(Mission.prototype); // makes operationbase protos copy of operation protos
+MissionButler.prototype.constructor = MissionButler; // reset constructor to operationbase, or else constructor is operation
 
-    if (!creep.memory.building) {
-      var sources;
-      var targetsS = creep.room.find(FIND_MY_STRUCTURES, {
-        filter: (s) => {
-          return (s.structureType == STRUCTURE_STORAGE);
-        }
-      });
-      var droppedSource = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 5);
-      if (droppedSource != "" && creep.pickup(droppedSource[0]) == ERR_NOT_IN_RANGE) {
-        creep.moveTo(droppedSource[0], {
-          visualizePathStyle: {
-            stroke: '#fa0'
-          }
-        });
-      } else if (targetsS != "" && creep.room.storage.store[RESOURCE_ENERGY] > 0) {
-        if (creep.withdraw(targetsS[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-          creep.moveToModule(targetsS[0]);
-        }
-      } else if (creep.harvest(sources = creep.pos.findClosestByPath(FIND_SOURCES)) == ERR_NOT_IN_RANGE) {
-        creep.moveToModule(sources);
-      }
-    } else {
-      var targets = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-        filter: (structure) => {
-          return (structure.structureType == STRUCTURE_EXTENSION || structure.structureType == STRUCTURE_SPAWN) &&
-            structure.energy < structure.energyCapacity;
-        }
-      });
-      var targetsT = creep.room.find(FIND_STRUCTURES, {
-        filter: (structure) => {
-          return (structure.structureType == STRUCTURE_TOWER) && structure.energy < structure.energyCapacity;
-        }
-      });
-      if (targets != null) {
-        if (creep.transfer(targets, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-          creep.moveToModule(targets);
-        }
-      } else if (targetsT.length > 0) {
-        targetsT.sort((a, b) => a.energy - b.energy);
-        if (creep.transfer(targetsT[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-          creep.moveToModule(targetsT[0]);
-        }
-      } else {
-        missUpgrader.run(creep);
-      }
-    }
-  }
+MissionButler.prototype.init = function () { // Initialize / build objects required
+
+};
+MissionButler.prototype.rolecall = function () { // perform rolecall on required creeps spawn if needed
+  this.butlers = this.creepRoleCall('butler', bodyWorker(1,1,1,1,1))
+};
+MissionButler.prototype.action = function () { // perform actions / missions
+
+};
+MissionButler.prototype.finalize = function () { // finalize?
+
 };
 
-module.exports = missButler;
+// Additional methods/functions below

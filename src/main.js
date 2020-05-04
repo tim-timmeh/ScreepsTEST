@@ -9,11 +9,11 @@ var spawner = require('spawner'); // spawner logic
 var creepAI = require('creepAI'); // creep logic
 var towerAI = require('towerAI'); // tower logic
 const profiler = require('screeps-profiler');
+
 profiler.enable();
 
-
 if(global.debug)console.log(`#Global has been reset!\n#Overhead reset CPU: ${Game.cpu.getUsed().toFixed(2)} (${(Game.cpu.getUsed()/Game.cpu.limit*100).toFixed(2) || '(sim)'}%), Memory: ${global.memorySize/1000} KB(${(global.memorySize/2048000*100).toFixed(2)}%)`);
-
+var globalResetTick = Game.time
 global.initRoomsMem(); // Ensure constant room features of visable rooms are in memory and structured eg. Sources
 global.gcOwnedStructures() // Garbage Cleanup old ownedStructures
 global.profilerGlobalReset.set() // sets profiler monitor time after global reset, default 10, change in config.
@@ -53,7 +53,7 @@ module.exports.loop = function () {
 
     // Init Phase
     let king = queen.initKing() // Creates king Object
-    let operations = queen.getOperations(king) // Get list of Operation Flags
+    let operations = queen.getOperations(king) // Instantiate list of Operation Flags
     for (let operation of operations) { // Loop through all Operation Objects
       operation.init() // Instantiate all of operations missions
     }
@@ -76,6 +76,6 @@ module.exports.loop = function () {
     towerAI(); // Tower Logic
 
     // Post Analasis / Utility
-    myFunc.exportStats() // Graphina
+    myFunc.exportStats(globalResetTick) // Graphina
   });
 };

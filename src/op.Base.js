@@ -1,6 +1,7 @@
 'use strict'
 require ('Operation');
 require ('config');
+require ('Miss.Butler')
 const {PRIORITY} = require('config');
 //CONSTRUCTOR
 function OperationBase(flag, flagName, opCode, king) {
@@ -11,9 +12,11 @@ function OperationBase(flag, flagName, opCode, king) {
 OperationBase.prototype = Object.create(Operation.prototype); // makes operationbase protos copy of operation protos
 OperationBase.prototype.constructor = OperationBase; // reset constructor to operationbase, or else constructor is operation
 
-OperationBase.prototype.init = function () { // Initialize / build objects required
+OperationBase.prototype.initOp = function () { // Initialize / build objects required
   //set SpawnGroup
+  this.spawnGroup = this.king.getSpawnGroup(this.flag.room)
   //butler missions
+  this.addMission(new MissionButler(this)))
   //defence missions
   //mining missions
   //building missions

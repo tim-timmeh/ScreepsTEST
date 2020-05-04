@@ -17,11 +17,14 @@ function Operation(flag, flagName, opCode, king) {
     //this.hasVision = true; // is there vision in the room
     //this.sources = this.flag.room.sources //get sources via room prototype (via variable/memory)
     //*this.minerals need to create
-  }
+  //}
 }
 
 Operation.prototype.init = function () { // Initialize / build objects required
+  this.initOp(); // instantiate all objects require for operation including missions
+  for (missions in this.missions) { // then instantiate objects required for missions and functions
 
+  }
 };
 Operation.prototype.rolecall = function () { // perform rolecall on required creeps spawn if needed
 
@@ -34,3 +37,6 @@ Operation.prototype.finalize = function () { // finalize?
 };
 
 // Additional methods/functions below
+Operation.prototype.addMission = function (mission) { // add missions
+  this.missions[mission.name] = mission;
+};
