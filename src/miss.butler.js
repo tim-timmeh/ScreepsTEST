@@ -1,4 +1,5 @@
 'use strict'
+require('mission');
 
 function MissionButler(operation) { // constructor, how to build the object
   Mission.call(operation,'Mission Butler')
@@ -11,7 +12,7 @@ MissionButler.prototype.init = function () { // Initialize / build objects requi
 
 };
 MissionButler.prototype.rolecall = function () { // perform rolecall on required creeps spawn if needed
-  this.butlers = this.creepRoleCall('butler', bodyWorker(1,1,1,1,1))
+  this.butlers = this.creepRoleCall('butler', getBodyWorker(1, 1, 1)) //work, carry, move, {maxRatio, maxEnergyPercent}
 };
 MissionButler.prototype.action = function () { // perform actions / missions
 

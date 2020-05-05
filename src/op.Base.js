@@ -1,4 +1,5 @@
 'use strict'
+
 require ('Operation');
 require ('config');
 require ('Miss.Butler')
@@ -14,9 +15,9 @@ OperationBase.prototype.constructor = OperationBase; // reset constructor to ope
 
 OperationBase.prototype.initOp = function () { // Initialize / build objects required
   //set SpawnGroup
-  this.spawnGroup = this.king.getSpawnGroup(this.flag.room)
+  this.SpawnGroup = this.king.getSpawnGroup(this.flag.room)
   //butler missions
-  this.addMission(new MissionButler(this)))
+  this.addMission(new MissionButler(this))
   //defence missions
   //mining missions
   //building missions

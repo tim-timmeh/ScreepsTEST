@@ -1,4 +1,5 @@
 'use strict'
+require('SpawnGroup');
 
 function King() { // constructor, how to build the object
 
@@ -19,14 +20,14 @@ King.prototype.finalize = function () { // finalize?
 // Additional methods/functions below
 
 King.prototype.getSpawnGroup = function (roomName) {
-        if (this.spawnGroups[roomName]) {
-            return this.spawnGroups[roomName];
+        if (this.SpawnGroups[roomName]) {
+            return this.SpawnGroups[roomName];
         }
         else {
             let room = Game.rooms[roomName];
             if (room && room.find(FIND_MY_SPAWNS).length > 0) {
-                this.spawnGroups[roomName] = new SpawnGroup(room);
-                return this.spawnGroups[roomName];
+                this.SpawnGroups[roomName] = new SpawnGroup(room);
+                return this.SpawnGroups[roomName];
             }
         }
     }

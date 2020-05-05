@@ -1,11 +1,11 @@
 'use strict'
 
-function spawnGroup(room) { // Constructor, framework to build a spawnGroup for a given (room)
+function SpawnGroup(room) { // Constructor, framework to build a SpawnGroup for a given (room)
   this.room = room;
-  this.spawns = room.find(FIND_MY_SPAWNS); // replace with _.filter for lower cpu?
-  if (!this.room.memory.spawnMemory) this.room.memory.spawnMemory = {};
-  this.memory = this.room.memory.spawnMemory;
-  this.extensions = room.findStructures(STRUCTURE_EXTENSION) as StructureExtension[];
+  this.spawns = room.find(FIND_MY_SPAWNS); // replace with _.filter for lower cpu?? FIND with no arguments is actualy cached so cheap?
+  if (!this.room.memory.spawnMemory) this.room.memory.spawnMemory = {}; //Memory.rooms[room].spawnMemory = {}
+  this.memory = this.room.memory.spawnMemory; //Memory.rooms[room].spawnMemory
+  this.extensions = room.findStructures(STRUCTURE_EXTENSION);
   this.manageSpawnLog();
   this.availableSpawnCount = this.getSpawnAvailability();
   this.isAvailable = this.availableSpawnCount > 0;
@@ -13,33 +13,40 @@ function spawnGroup(room) { // Constructor, framework to build a spawnGroup for 
   this.maxSpawnEnergy = this.room.energyCapacityAvailable;
   this.pos = _.head(this.spawns).pos;
 }
-// Gives built spawngroups methods (functions etc)
-spawnGroup.prototype.spawn = function (build, name, memory, reservation)
+// Additional methods/functions below
+SpawnGroup.prototype.spawn = function (body, name, memory) {
+  let spawnResults;
+  this.availableSpawnCount -= 1;
+  this.isAvailable = this.availableSpawnCount > 0;
+  //this.isAvailable = false;
+  for (let spawn of this.spawns) {
+    if (spawn.spawning == null){
+      spawnResults = spawn.createCreep(body, name, memory);
+      console.log(`Spawn: ${spawn.name}, Spawning: ${name}, Body: ${body}\n Results: ${spawnResults}`);
+      break;
+    }
+  }
+  return spawnResults;
+}
 
-// functions to assist spawngroup
-manageSpawnLog() {
-  if (!this.memory.log) this.memory.log = {availability: 0, history: [], longHistory: []};
 
-  if (Game.time % 100 !== 0) return; // early
+SpawnGroup.prototype.manageSpawnLog = function () {
+  if (!this.memory.log) this.memory.log = {idleSpawns : 0, availability: 0, history: [], longHistory: []}; //Memory.rooms[room].spawnMemory.log
+  if (Game.time % 100 != 0) return; // early
   let log = this.memory.log;
   let average = log.availability / 100;
   log.availability = 0;
-  /*
-  if (average > 1) console.log("SPAWNING:", this.room, "not very busy (avg", average, "idle out of",
-  this.spawns.length, "), perhaps add more harvesting");
-  if (average < .1) console.log("SPAWNING:", this.room, "very busy (avg", average, "idle out of",
-  this.spawns.length, "), might want to reduce harvesting");
-  */
   log.history.push(average);
   while (log.history.length > 5) log.history.shift();
-
-  if (Game.time % 500 !== 0) return; // early
+  //Memory.stats.rooms[`${this.room.name}.spawnGroup.idleHistory`] = log.history;
+  if (Game.time % 500 != 0) return; // early
   let longAverage = _.sum(log.history) / 5;
   log.longHistory.push(longAverage);
-  while (log.history.length > 5) log.history.shift();
+  while (log.longHistory.length > 5) log.longHistory.shift();
+  //Memory.stats.rooms[`${this.room.name}.spawnGroup.idleLongHistory`] = log.longHistory;
 }
 
-getSpawnAvailability() {
+SpawnGroup.prototype.getSpawnAvailability = function () {
   let count = 0;
   for (let spawn of this.spawns) {
     if (spawn.spawning == null) {
@@ -47,6 +54,7 @@ getSpawnAvailability() {
     }
   }
   this.memory.log.availability += count;
-  Memory.stats["spawnGroups." + this.room.name + ".idleCount"] = count;
+  this.memory.log.idleSpawns = count;
+  //Memory.stats["SpawnGroups." + this.room.name + ".idleSpawns"] = count;
   return count;
 }

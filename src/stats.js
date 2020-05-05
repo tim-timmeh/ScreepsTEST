@@ -1,15 +1,18 @@
 'use strict'
 module.exports = function exportStats(globalResetTick) {
   // Reset/setup Memory Objects
-  Memory.stats = {
-    gcl: {},
-    rooms: {},
-    cpu: {},
-    memory: {},
+  if(!Memory.stats) {
+    Memory.stats = {
+      gcl: {},
+      rooms: {},
+      cpu: {},
+      memory: {},
+    }
   }
   Memory.stats.time = Game.time;
   // Collect room stats
   for (let roomName in Game.rooms) {
+    let spawnLog
     let room = Game.rooms[roomName];
     let isMyRoom = (room.controller ? room.controller.my : false);
     if (isMyRoom) {
@@ -21,6 +24,9 @@ module.exports = function exportStats(globalResetTick) {
       roomStats.controllerProgress = room.controller.progress;
       roomStats.controllerProgressTotal = room.controller.progressTotal;
       roomStats.controllerLevel = room.controller.level;
+    }
+    if ((spawnLog = Memory.rooms[roomName].spawnMemory.log.idleSpawns)) { // if room has spawn group memory log
+      Memory.stats.rooms[roomName].idleSpawns = spawnLog // add it too stats
     }
   }
   // Collect GCL stats
@@ -36,3 +42,4 @@ module.exports = function exportStats(globalResetTick) {
   Memory.stats.memory.used = RawMemory.get().length/1000;
   Memory.stats.memory.limit = 2048;
 }
+//Memory.rooms[room].spawnMemory.log
