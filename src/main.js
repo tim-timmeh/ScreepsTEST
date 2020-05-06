@@ -3,6 +3,7 @@ require('config'); // Custom config here
 require('globals'); // Global Variables
 require('prototypes'); // Modified Prototypes
 require('King') // king constructor
+var exportStats = require('stats'); // stat function
 var queen = require('queen'); // Import Functions
 var myFunc = require('myfunctions'); // Import Functions
 var spawner = require('spawner'); // spawner logic
@@ -76,6 +77,6 @@ module.exports.loop = function () {
     towerAI(); // Tower Logic
 
     // Post Analasis / Utility
-    myFunc.exportStats(globalResetTick) // Graphina
+    exportStats(globalResetTick) // Graphina
   });
 };

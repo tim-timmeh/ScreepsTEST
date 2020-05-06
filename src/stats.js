@@ -1,13 +1,13 @@
 'use strict'
 module.exports = function exportStats(globalResetTick) {
   // Reset/setup Memory Objects
-  if(!Memory.stats) {
-    Memory.stats = {
-      gcl: {},
-      rooms: {},
-      cpu: {},
-      memory: {},
-    }
+
+  Memory.stats = {
+    gcl: {},
+    rooms: {},
+    cpu: {},
+    memory: {},
+
   }
   Memory.stats.time = Game.time;
   // Collect room stats
@@ -24,9 +24,9 @@ module.exports = function exportStats(globalResetTick) {
       roomStats.controllerProgress = room.controller.progress;
       roomStats.controllerProgressTotal = room.controller.progressTotal;
       roomStats.controllerLevel = room.controller.level;
-    }
-    if ((spawnLog = Memory.rooms[roomName].spawnMemory.log.idleSpawns)) { // if room has spawn group memory log
-      Memory.stats.rooms[roomName].idleSpawns = spawnLog // add it too stats
+      if ((spawnLog = Memory[`.rooms.${roomName}.spawnMemory.log.idleSpawns`])) { // if room has spawn group memory log
+        roomStats.idleSpawns = spawnLog // add it too stats
+      }
     }
   }
   // Collect GCL stats

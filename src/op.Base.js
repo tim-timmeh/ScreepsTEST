@@ -1,12 +1,20 @@
 'use strict'
 
-require ('Operation');
-require ('config');
-require ('Miss.Butler')
-const {PRIORITY} = require('config');
-//CONSTRUCTOR
-function OperationBase(flag, flagName, opCode, king) {
-  Operation.call(this, flag, flagName, opCode, king); // uses params to pass object through operation constructor first
+require('Operation');
+require('config');
+require('Miss.Butler')
+const {PRIORITY} = require('config'); //
+/**
+ * [General running of the base]
+ * @param       {[object]} flag     [missions will operate relative to this flag, use colors to determine flag type via opCode]
+ * @param       {[string]} flagName [flag.name should be default set flag1/2/3 etc maybe need to add additional incase of doubleup?]
+ * @param       {[string]} flagType   [decoded flag color used to determine which operation to instantiate (eg green/green = 55 = OpBase)]
+ * @param       {[object]} king     [object used for king-scoped behavior (terminal transmission, etc.)]
+ * @constructor
+ * @extends Operation
+ */
+function OperationBase(flag, flagName, flagType, king) {
+  Operation.call(this, flag, flagName, flagType, king); // uses params to pass object through operation constructor first
   this.priority = PRIORITY.CORE;
 }
 
@@ -14,13 +22,21 @@ OperationBase.prototype = Object.create(Operation.prototype); // makes operation
 OperationBase.prototype.constructor = OperationBase; // reset constructor to operationbase, or else constructor is operation
 
 OperationBase.prototype.initOp = function () { // Initialize / build objects required
-  //set SpawnGroup
-  this.SpawnGroup = this.king.getSpawnGroup(this.flag.room)
-  //butler missions
-  this.addMission(new MissionButler(this))
-  //defence missions
-  //mining missions
+  //Room Layout?
+
+  this.SpawnGroup = this.king.getSpawnGroup(this.flag.room);
+  if (!this.SpawnGroup){console.log('no spawn group in room, create remote spawngroup code')} //get closest spawn group
+
+  this.addMission(new MissionButler(this));
+
+  this.addMission(new DefenceMission(this));
+
+  //base commander mission?
+  //
+  //mining missions (include hauler)
+  //
   //building missions
+  //
   //upgrader missions
   //
 };

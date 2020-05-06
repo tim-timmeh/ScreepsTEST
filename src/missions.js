@@ -63,11 +63,12 @@ Mission.prototype.creepRoleCall = function (roleName, creepBody, creepAmount = 1
   return creepArray;
 };
 
-Mission.prototype.getBodyWorker = function (work, carry, move, options = {} ) {//maxRatio, maxEnergyPercent) { // Ratio of work/carry/move parts, max spawn ratio eg, ration energy use % below max
+Mission.prototype.getBodyWorker = function (work, carry, move, options = {} ) {//maxRatio, maxEnergyPercent, forceSpawn) { // Ratio of work/carry/move parts, max spawn ratio eg, ration energy use % below max
   let blockEnergyReq = work * 100 + carry * 50 + move * 50; // get energy per creep block
   let blockPartsReq = work + carry + move; // get amount of parts per creep block
   let blockLimit = options.maxRatio ? blockPartsReq * options.maxRatio : Math.floor(50 / blockPartsReq); // max amount of blocks for creep
-  let blockMultiplier = Math.min(Math.floor((this.spawnGroup.maxSpawnEnergy * ((options.maxEnergyPercent / 100) || 1)) / blockEnergyReq), blockLimit); // block multipler
+  let energyPool = options.forceSpawn ? Math.max(this.spawnGroup.currentSpawnEnergy, 300) : this.spawnGroup.maxSpawnEnergy; // if forceSpawn true then spawn with current energy or 300(incase total creep death?)
+  let blockMultiplier = Math.min(Math.floor(energyPool * (options.maxEnergyPercent / 100 || 1) / blockEnergyReq), blockLimit); // block multipler
   let creepBody = [];
   for (let i = 0; i < work * blockMultiplier; i++){
     creepBody.push(WORK);

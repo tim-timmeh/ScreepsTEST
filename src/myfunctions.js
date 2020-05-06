@@ -1,4 +1,5 @@
 'use strict'
+
 // Custom functions reusable in code
 module.exports = {
 
@@ -24,70 +25,59 @@ module.exports = {
   ensureMemTreeObj: function(fn,defaultVal) { // Pass Memory location as function, will return if exists, will create if error
     try {
       return fn(); // will exit if parent exists
-    } catch { // will create tree if parent does not exist
+    } catch (e) { // will create tree if parent does not exist
       if(global.debug)console.log(`  #Setting Memory Tree: Memory.${defaultVal}`);
       _.set(Memory, defaultVal,{});
       return  _.get(Memory,defaultVal)
     }
   },
 
-  tryWrap : function (fn,description = 'Nondescript Error, posting stack') { // wrap any function in a try/catch to let code keep running around error
+
+  //myFunc.tryWrap(() => {
+  //
+  //},`ERROR `)
+  tryWrap : function (fn, description = 'Nondescript Error') { // wrap any function in a try/catch to let code keep running around error
     try {
       return fn(); // try to do function. (Not sure if to use return or not?)
     } catch (e) {
-      console.log(`${description}\n${e.stack}`) // if error console log stack at error
+      console.log(`${description} @ ${__file} : ${__line}\n${e.stack}`) // if error console log stack at error
     }
   },
-
-
-  //----- Using room.prototype.sources instead.
-  // addRoomSources: function (visableRoom){
-  //   let sources = visableRoom.find(FIND_SOURCES);
-  //   console.log(`Sources Found in ${visableRoom} - ${sources}`);
-  //   let obj = {}
-  //   for(let i in sources){
-  //     let source = sources[i];
-  //     obj[source.id] = {};
-  //     //source.memory.workers = source.memory.workers || 0;
-  //   }
-  //   console.log(obj);
-  //   return obj
-  // }
-
-  exportStats : function () { // Sets Memory.stats for populating screepspl.us graph
-    // Reset stats object
-    Memory.stats = {
-      gcl: {},
-      rooms: {},
-      cpu: {},
-    };
-    Memory.stats.time = Game.time;
-    // Collect room stats
-    for (let roomName in Game.rooms) {
-      let room = Game.rooms[roomName];
-      let isMyRoom = (room.controller ? room.controller.my : false);
-      if (isMyRoom) {
-        let roomStats = Memory.stats.rooms[roomName] = {};
-        roomStats.storageEnergy           = (room.storage ? room.storage.store.energy : 0);
-        roomStats.terminalEnergy          = (room.terminal ? room.terminal.store.energy : 0);
-        roomStats.energyAvailable         = room.energyAvailable;
-        roomStats.energyCapacityAvailable = room.energyCapacityAvailable;
-        roomStats.controllerProgress      = room.controller.progress;
-        roomStats.controllerProgressTotal = room.controller.progressTotal;
-        roomStats.controllerLevel         = room.controller.level;
-      }
-    }
-    // Collect GCL stats
-    Memory.stats.gcl.progress      = Game.gcl.progress;
-    Memory.stats.gcl.progressTotal = Game.gcl.progressTotal;
-    Memory.stats.gcl.level         = Game.gcl.level;
-    // Collect CPU stats
-    Memory.stats.cpu.bucket        = Game.cpu.bucket;
-    Memory.stats.cpu.limit         = Game.cpu.limit;
-    Memory.stats.cpu.used          = Game.cpu.getUsed();
-  },
-
 };
+//   exportStats : function () { // Sets Memory.stats for populating screepspl.us graph
+//     // Reset stats object
+//     Memory.stats = {
+//       gcl: {},
+//       rooms: {},
+//       cpu: {},
+//     };
+//     Memory.stats.time = Game.time;
+//     // Collect room stats
+//     for (let roomName in Game.rooms) {
+//       let room = Game.rooms[roomName];
+//       let isMyRoom = (room.controller ? room.controller.my : false);
+//       if (isMyRoom) {
+//         let roomStats = Memory.stats.rooms[roomName] = {};
+//         roomStats.storageEnergy           = (room.storage ? room.storage.store.energy : 0);
+//         roomStats.terminalEnergy          = (room.terminal ? room.terminal.store.energy : 0);
+//         roomStats.energyAvailable         = room.energyAvailable;
+//         roomStats.energyCapacityAvailable = room.energyCapacityAvailable;
+//         roomStats.controllerProgress      = room.controller.progress;
+//         roomStats.controllerProgressTotal = room.controller.progressTotal;
+//         roomStats.controllerLevel         = room.controller.level;
+//       }
+//     }
+//     // Collect GCL stats
+//     Memory.stats.gcl.progress      = Game.gcl.progress;
+//     Memory.stats.gcl.progressTotal = Game.gcl.progressTotal;
+//     Memory.stats.gcl.level         = Game.gcl.level;
+//     // Collect CPU stats
+//     Memory.stats.cpu.bucket        = Game.cpu.bucket;
+//     Memory.stats.cpu.limit         = Game.cpu.limit;
+//     Memory.stats.cpu.used          = Game.cpu.getUsed();
+//   },
+//
+// };
 
 
 

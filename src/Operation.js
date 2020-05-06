@@ -1,16 +1,17 @@
 'use strict'
 
-/*
-flag - missions will operate relative to this flag, use colors to determine flag type via opCode
-flaName - flag.name should be default set flag1/2/3 etc maybe need to add additional incase of doubleup?
-pCode - color code of flag (eg 55 = green green) used to determine which operation to instantiate
-empire - object used for king-scoped behavior (terminal transmission, etc.)
-*/
-
-function Operation(flag, flagName, opCode, king) {
+/**
+ * [Top level operation constructor]
+ * @param       {[object]} flag     [missions will operate relative to this flag, use colors to determine flag type via opCode]
+ * @param       {[string]} flagName [flag.name should be default set flag1/2/3 etc maybe need to add additional incase of doubleup?]
+ * @param       {[string]} flagType   [decoded flag color used to determine which operation to instantiate (eg green/green = 55 = OpBase)]
+ * @param       {[object]} king     [object used for king-scoped behavior (terminal transmission, etc.)]
+ * @constructor
+ */
+function Operation(flag, flagName, flagType, king) {
   this.flag = flag;
   this.name = flagName
-  this.type = opCode
+  this.type = flagType
   this.king = king
   this.memory = flag.memory
   //if (this.flag.room) {
@@ -21,7 +22,9 @@ function Operation(flag, flagName, opCode, king) {
 }
 
 Operation.prototype.init = function () { // Initialize / build objects required
+  myFunc.tryWrap(() => {
   this.initOp(); // instantiate all objects require for operation including missions
+},`ERROR initOp ${this.name} ${this.type}`)
   for (missions in this.missions) { // then instantiate objects required for missions and functions
 
   }
