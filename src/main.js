@@ -13,7 +13,10 @@ var roleAttacker = require("role.attacker");
 var roleTank = require("role.tank");
 var roleDefender = require("role.defender");
 var roleHealer = require("role.healer");
-let enemyspotted
+require('stats');
+let enemyspotted;
+let globalResetTick = Game.time;
+
 
 // Is obj empty?
 function isEmpty(obj) {
@@ -91,7 +94,7 @@ module.exports.loop = function () {
       if (butlers.length < 2) {
         newName = "Butler" + Game.time + spawn.room.name;
         console.log("Butlers: " + spawn.room.name + " - " + butlers.length + "\nSpawning new butler: " + newName);
-        spawn.spawnCreep([WORK, CARRY, MOVE], newName, {
+        spawn.spawnCreep([WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], newName, {
           memory: {
             role: "butler"
           }
@@ -160,7 +163,7 @@ module.exports.loop = function () {
       } else if (upgraders.length < 1) {
         newName = "Upgrader" + Game.time + spawn.room.name;
         console.log("Upgraders: " + spawn.room.name + " - " + upgraders.length + "\nSpawning new upgrader: " + newName);
-        spawn.spawnCreep([WORK, CARRY, MOVE], newName, {
+        spawn.spawnCreep([WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], newName, {
           memory: {
             role: "upgrader"
           }
@@ -353,5 +356,6 @@ module.exports.loop = function () {
     for (var tower of towers) {
       roleTower.run(tower);
     }
+    exportStats(globalResetTick)
   });
 };
