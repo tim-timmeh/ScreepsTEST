@@ -94,7 +94,7 @@ module.exports.loop = function () {
       if (butlers.length < 2) {
         newName = "Butler" + Game.time + spawn.room.name;
         console.log("Butlers: " + spawn.room.name + " - " + butlers.length + "\nSpawning new butler: " + newName);
-        spawn.spawnCreep([WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], newName, {
+        spawn.spawnCreep([WORK, CARRY, MOVE], newName, {
           memory: {
             role: "butler"
           }
