@@ -13,7 +13,7 @@ var roleAttacker = require("role.attacker");
 var roleTank = require("role.tank");
 var roleDefender = require("role.defender");
 var roleHealer = require("role.healer");
-require('stats');
+var exportStats = require('stats');
 let enemyspotted;
 let globalResetTick = Game.time;
 
