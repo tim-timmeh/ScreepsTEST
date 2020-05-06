@@ -1,14 +1,14 @@
 'use strict'
 module.exports = function exportStats(globalResetTick) {
   // Reset/setup Memory Objects
-  if(!Memory.stats) {
-    Memory.stats = {
-      gcl: {},
-      rooms: {},
-      cpu: {},
-      memory: {},
-    }
+
+  Memory.stats = {
+    gcl: {},
+    rooms: {},
+    cpu: {},
+    memory: {},
   }
+
   Memory.stats.time = Game.time;
   // Collect room stats
   for (let roomName in Game.rooms) {
@@ -34,7 +34,7 @@ module.exports = function exportStats(globalResetTick) {
   Memory.stats.gcl.progressTotal = Game.gcl.progressTotal;
   Memory.stats.gcl.level = Game.gcl.level;
   // Collect CPU stats
-  Memory.stats.cpu.lastGLobalReset = globalResetTick
+  Memory.stats.cpu.lastGlobalReset = globalResetTick
   Memory.stats.cpu.bucket = Game.cpu.bucket;
   Memory.stats.cpu.limit = Game.cpu.limit;
   Memory.stats.cpu.used  = Game.cpu.getUsed();
