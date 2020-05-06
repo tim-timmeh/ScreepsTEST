@@ -34,7 +34,7 @@ module.exports = function exportStats(globalResetTick) {
   Memory.stats.gcl.progressTotal = Game.gcl.progressTotal;
   Memory.stats.gcl.level = Game.gcl.level;
   // Collect CPU stats
-  Memory.stats.cpu.LastGLobalReset = globalResetTick
+  Memory.stats.cpu.lastGLobalReset = globalResetTick
   Memory.stats.cpu.bucket = Game.cpu.bucket;
   Memory.stats.cpu.limit = Game.cpu.limit;
   Memory.stats.cpu.used  = Game.cpu.getUsed();
