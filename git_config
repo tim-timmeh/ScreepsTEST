@@ -22,3 +22,11 @@ and add .git/config branch name as below
 [branch "Refactor"]
   remote = origin
   merge = refs/heads/Refactor
+
+--------------------------------------------------------------------
+To set username & email on atoms github go to below and add user details.
+User\AppData\Local\atom\app-1.46.0\resources\app.asar.unpacked\node_modules\dugite\git\etc\gitconfig
+
+[user]
+	name = "tim-timmeh"
+	email = "39078118+tim-timmeh@users.noreply.github.com"
