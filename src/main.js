@@ -114,7 +114,7 @@ let targetsS
 
 
 
-      } else if (spawn.room.energyCapacityAvailable > 800 && (miners.length < 1 || (targetsS = creep.room.find(FIND_MY_STRUCTURES, {
+      } else if (spawn.room.energyCapacityAvailable > 800 && (miners.length < 1 || (targetsS = spawn.room.find(FIND_MY_STRUCTURES, {
         filter: (s) => {
           return (s.structureType == STRUCTURE_STORAGE);
         }
