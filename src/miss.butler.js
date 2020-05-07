@@ -12,8 +12,8 @@ MissionButler.prototype.init = function () { // Initialize / build objects requi
 
 };
 MissionButler.prototype.rolecall = function () { // perform rolecall on required creeps spawn if needed
-  this.butlers = this.creepRoleCall('butler', getBodyWorker(1, 1, 1), 2) //work, carry, move, {maxRatio, maxEnergyPercent}
-  if (!this.butlers) {this.creepRoleCall('butler', getBodyWorker(1, 1, 1, {forceSpawn : true}), 2)} // if no butlers forceSpawn (total creep wipe)
+  this.butlers = this.creepRoleCall('butler', getBody({WORK : 1 , CARRY : 1, MOVE : 1}), 2) //work, carry, move, {maxRatio, maxEnergyPercent}
+  if (!this.butlers) {this.creepRoleCall('butler', getBody({WORK : 1 , CARRY : 1, MOVE : 1}, {forceSpawn : true}), 2)} // if no butlers forceSpawn (total creep wipe)
 };
 MissionButler.prototype.action = function () { // perform actions / missions
 
