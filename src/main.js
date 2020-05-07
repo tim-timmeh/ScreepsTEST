@@ -114,11 +114,11 @@ let targetsSt = undefined;
 
 
 
-      } else if (spawn.room.energyCapacityAvailable > 800 && (miners.length < 1 || (targetsSt = spawn.room.find(FIND_MY_STRUCTURES, {
+      } else if (spawn.room.energyCapacityAvailable > 800 && (miners.length < 1 || !(isEmpty(targetsSt = spawn.room.find(FIND_MY_STRUCTURES, {
         filter: (s) => {
           return (s.structureType == STRUCTURE_STORAGE);
         }
-      })) && (miners.length < roomAllSources.length && haulers.length > 0))) {
+      }))) && (miners.length < roomAllSources.length && haulers.length > 0))) {
         for (var source of roomAllSources) {
           let filteredCreep = _.filter(Game.creeps, (creep) => creep.memory.minerSource == source.id);
           if (filteredCreep != "") {
