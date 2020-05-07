@@ -62,7 +62,7 @@ module.exports.loop = function () {
         console.log("Clearing non-existing creep memory: ", name);
       }
     }
-
+let targetsS
     // Multi room - run code on each room
     for (var spawnName in Game.spawns) {
       var spawn = Game.spawns[spawnName];
@@ -114,7 +114,11 @@ module.exports.loop = function () {
 
 
 
-      } else if (spawn.room.energyCapacityAvailable > 800 && (miners.length < 1 || (miners.length < roomAllSources.length && haulers.length > 0))) {
+      } else if (spawn.room.energyCapacityAvailable > 800 && (miners.length < 1 || (targetsS = creep.room.find(FIND_MY_STRUCTURES, {
+        filter: (s) => {
+          return (s.structureType == STRUCTURE_STORAGE);
+        }
+      })) && (miners.length < roomAllSources.length && haulers.length > 0))) {
         for (var source of roomAllSources) {
           let filteredCreep = _.filter(Game.creeps, (creep) => creep.memory.minerSource == source.id);
           if (filteredCreep != "") {
