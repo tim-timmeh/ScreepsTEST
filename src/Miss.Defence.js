@@ -15,7 +15,7 @@ MissionDefence.prototype.init = function () { // Initialize / build objects requ
 };
 
 MissionDefence.prototype.rolecall = function () { // perform rolecall on required creeps spawn if needed
-  this.defenders = this.creepRoleCall('defender', getBody({TOUGH: 1, ATTACK : 3 , MOVE : 4}),{maxRatio : 5});
+  this.defenders = this.creepRoleCall('defender', getBody({TOUGH: 1, ATTACK : 3 , MOVE : 4},{maxRatio : 5}));
 };
 
 MissionDefence.prototype.action = function () { // perform actions / missions
