@@ -1,24 +1,28 @@
-"use strict";
-require("moveToModule")
-var missMiner = {
-  run: function(creep) {
-    var source = Game.getObjectById(creep.memory.minerSource);
-    var creepRoomName = creep.room.name
-    var structures = [];
-    if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
-      creep.moveToModule(source);
-    } else if (creep.harvest(source) == !ERR_BUSY && ((structures = creep.pos.lookFor(LOOK_STRUCTURES)) != undefined && structures.length < 1)) {
-      var construction = creep.pos.lookFor(LOOK_CONSTRUCTION_SITES);
-      if (construction.length < 1) {
-        creep.pos.createConstructionSite(STRUCTURE_CONTAINER);
-      } else if (_.sum(creep.carry) >= (creep.carryCapacity - 25)) {
-        creep.build(construction[0]);
-      }
-    } else if (!Memory.containersTest[creepRoomName]) {
-      Memory.containersTest[creepRoomName] = [];
-    } else if ((structures != undefined && structures != "") && Memory.containersTest[creepRoomName].indexOf(structures[0].id) == -1) {
-      Memory.containersTest[creepRoomName].push(structures[0].id);
-    }
-  }
+'use strict'
+require('mission');
+
+function MissionMiner(operation, name, source) { // constructor, how to build the object
+  Mission.call(operation,name)
+  this.source = source
+}
+
+MissionMiner.prototype = Object.create(Mission.prototype); // makes operationbase protos copy of operation protos
+MissionMiner.prototype.constructor = MissionMiner; // reset constructor to operationbase, or else constructor is operation
+
+MissionMiner.prototype.init = function () { // Initialize / build objects required
+  this.distanceToSpawn = this.findDistanceToSpawn
+  this.storage =
 };
-module.exports = missMiner;
+
+MissionMiner.prototype.rolecall = function () { // perform rolecall on required creeps spawn if needed
+  this.miners = this.creepRoleCall('miner', getBody({}));
+};
+
+MissionMiner.prototype.action = function () { // perform actions / missions
+
+};
+MissionMiner.prototype.finalize = function () { // finalize?
+
+};
+
+// Additional methods/functions below

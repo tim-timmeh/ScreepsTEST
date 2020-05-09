@@ -24,17 +24,20 @@ OperationBase.prototype.constructor = OperationBase; // reset constructor to ope
 OperationBase.prototype.initOp = function () { // Initialize / build objects required
   //Room Layout?
 
-  this.SpawnGroup = this.king.getSpawnGroup(this.flag.room);
-  if (!this.SpawnGroup){console.log('no spawn group in room, create remote spawngroup code')} //get closest spawn group
+  this.spawnGroup = this.king.getSpawnGroup(this.flag.room);
+  if (!this.spawnGroup){console.log('no spawn group in room, create remote spawngroup code')} //get closest spawn group
 
   this.addMission(new MissionButler(this));
 
   this.addMission(new DefenceMission(this));
 
   //base commander mission?
-  //
-  //mining missions (include hauler)
-  //
+  for (let i = 0; i < this.sources.length; i++) {
+    let source = sources[i];
+    //if rcl 8 do link mining
+    this.addMission(new MiningMission(this, 'Mission Miner' + i, source));
+  }
+
   //building missions
   //
   //upgrader missions

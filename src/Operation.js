@@ -14,11 +14,11 @@ function Operation(flag, flagName, flagType, king) {
   this.type = flagType
   this.king = king
   this.memory = flag.memory
-  //if (this.flag.room) {
+  if (this.flag.room) {
     //this.hasVision = true; // is there vision in the room
-    //this.sources = this.flag.room.sources //get sources via room prototype (via variable/memory)
+    this.sources = this.flag.room.sources //get sources via room prototype (via variable/memory)
     //*this.minerals need to create
-  //}
+  }
 }
 
 Operation.prototype.init = function () { // Initialize / build objects required

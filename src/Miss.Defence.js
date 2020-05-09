@@ -19,10 +19,17 @@ MissionDefence.prototype.rolecall = function () { // perform rolecall on require
 };
 
 MissionDefence.prototype.action = function () { // perform actions / missions
-
+  let order = 0;
+  for(let defender of this.defenders) {
+    this.defenderAction(defender, order);
+    order++;
+  }
 };
 MissionDefence.prototype.finalize = function () { // finalize?
 
 };
 
 // Additional methods/functions below
+function defenderAction(defender, order) {
+
+}

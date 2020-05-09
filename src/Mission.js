@@ -8,7 +8,7 @@ function Mission(operation, name) {
   this.flag = operation.flag
   this.room = operation.room
   this.king = operation.king
-  this.SpawnGroup = operation.SpawnGroup
+  this.spawnGroup = operation.spawnGroup
   this.sources = operation.Sources
   if (!operation.flag.memory[this.name]) operation.flag.memory[this.name] = {};
   this.memory = operation.flag.memory[this.name];
@@ -96,6 +96,13 @@ Mission.prototype.getBody = function (bodyConfig, options = {}) { //, ,
     }
   }
   return creepBody
+}
+
+Mission.prototype.findDistanceToSpawn = function (destination) { // pass a room position and find distance to spawn group
+  if (!this.memory.distanceToSpawn) {
+    this.memory.distanceToSpawn = this.room.findPath(this.spawnGroup.pos, destination, {ignoreCreeps : true}).length - 1; //generates path from spawn to source -1 because creep doesnt stand ontop of source
+  }
+  return this.memory.distanceToSpawn
 }
 
 // Mission.prototype.getBodyWorker = function (work, carry, move, options = {} ) {//maxRatio, maxEnergyPercent, forceSpawn keepFormat) { // Ratio of work/carry/move parts, max spawn ratio eg, ration energy use % below max
