@@ -105,6 +105,7 @@ Mission.prototype.findDistanceToSpawn = function (destination) { // pass a room 
   return this.memory.distanceToSpawn
 }
 
+
 // Mission.prototype.getBodyWorker = function (work, carry, move, options = {} ) {//maxRatio, maxEnergyPercent, forceSpawn keepFormat) { // Ratio of work/carry/move parts, max spawn ratio eg, ration energy use % below max
 //   let blockEnergyReq = work * 100 + carry * 50 + move * 50; // get energy per creep block
 //   let blockPartsReq = work + carry + move; // get amount of parts per creep block
