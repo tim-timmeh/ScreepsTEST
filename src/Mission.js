@@ -105,6 +105,24 @@ Mission.prototype.findDistanceToSpawn = function (destination) { // pass a room 
   return this.memory.distanceToSpawn
 }
 
+Mission.prototype.findStorage = function (position) { // pass a room position and find closest storage
+  let storage
+  if (this.memory.storageID) {
+    storage = Game.getObjectById(this.memory.storageID);
+    if (storage && storage.room.controller.level >=4) return storage
+  } else if (this.room.storage && this.room.storage.my) {
+    return storage = this.memory.storageID = this.room.storage.id // find closest ? // REDO THIS SECTION RETURNING ID INSTEAD OF STORAGE OBJECT
+  } else if (this.spawnGroup.room.storage.id){
+    return storage = this.memory.storageID = this.spawnGroup.room.storage.id// REDO THIS SECTION RETURNING ID INSTEAD OF STORAGE OBJECT
+  } else {
+    let storages = _.filter(this.empire.storages, (storage) => storage.room.controller.level >= 4);
+    if (storages.length == 0) return;
+    if (storages.length == 1) return storages;
+    let sorted = _.sortBy(storages, (s) => Game.map.findPathTo(s.pos.roomName, position).length); // VERY EXPENSIVE?
+    return sorted[0];
+  }
+}
+
 
 // Mission.prototype.getBodyWorker = function (work, carry, move, options = {} ) {//maxRatio, maxEnergyPercent, forceSpawn keepFormat) { // Ratio of work/carry/move parts, max spawn ratio eg, ration energy use % below max
 //   let blockEnergyReq = work * 100 + carry * 50 + move * 50; // get energy per creep block
