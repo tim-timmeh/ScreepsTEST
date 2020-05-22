@@ -105,7 +105,7 @@ let targetsSt = undefined;
 
           newName = "Defender" + Game.time + spawn.room.name;
           console.log("Spawning new Defender: " + newName);
-          spawn.spawnCreep([MOVE, MOVE, ATTACK, ATTACK], newName, {
+          spawn.spawnCreep([MOVE, MOVE, ATTACK, ATTACK, MOVE, MOVE, ATTACK, ATTACK], newName, {
           //spawn.spawnCreep([MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, MOVE, MOVE, HEAL], newName, {
             memory: {
               role: "defender"
@@ -150,7 +150,7 @@ let targetsSt = undefined;
           if (lastContainer == container || _.filter(Game.creeps, (creep) => creep.memory.role == "hauler" && creep.memory.haulerSource == container) == "") {
             newName = "Hauler" + Game.time + spawn.room.name;
             console.log("Haulers: " + spawn.room.name + " - " + haulers.length + "\nSpawning new hauler: " + newName + "\nFor container : " + container);
-            spawn.spawnCreep([WORK, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], newName, {
+            spawn.spawnCreep([MOVE,MOVE,MOVE,MOVE,MOVE,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY], newName, {
               memory: {
                 role: "hauler",
                 haulerSource: container
@@ -164,10 +164,26 @@ let targetsSt = undefined;
           }
           //lastContainer = container
         }
+      } else if (upgraders.length < 1 && spawn.room.energyCapacityAvailable <= 300) {
+        newName = "Upgrader" + Game.time + spawn.room.name;
+        console.log("Upgraders: " + spawn.room.name + " - " + upgraders.length + "\nSpawning new upgrader: " + newName);
+        spawn.spawnCreep([ WORK, CARRY, MOVE], newName, {
+          memory: {
+            role: "upgrader"
+          }
+        });
+      } else if (upgraders.length < 1 && spawn.room.energyCapacityAvailable <= 550) {
+        newName = "Upgrader" + Game.time + spawn.room.name;
+        console.log("Upgraders: " + spawn.room.name + " - " + upgraders.length + "\nSpawning new upgrader: " + newName);
+        spawn.spawnCreep([WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], newName, {
+          memory: {
+            role: "upgrader"
+          }
+        });
       } else if (upgraders.length < 1) {
         newName = "Upgrader" + Game.time + spawn.room.name;
         console.log("Upgraders: " + spawn.room.name + " - " + upgraders.length + "\nSpawning new upgrader: " + newName);
-        spawn.spawnCreep([WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], newName, {
+        spawn.spawnCreep([ WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE,], newName, {
           memory: {
             role: "upgrader"
           }
@@ -181,10 +197,18 @@ let targetsSt = undefined;
               role: "repairer"
             }
           });
-        } else {
+        } else if (repairers.length < 1 && spawn.room.energyCapacityAvailable <= 550){
           newName = "Repairer" + Game.time + spawn.room.name;
           console.log("repairer: " + spawn.room.name + " - " + repairers.length + "\nSpawning new repairer: " + newName);
-          spawn.spawnCreep([WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], newName, {
+          spawn.spawnCreep([WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], newName, {
+            memory: {
+              role: "repairer"
+            }
+          });
+        } else if (repairers.length < 1){
+          newName = "Repairer" + Game.time + spawn.room.name;
+          console.log("repairer: " + spawn.room.name + " - " + repairers.length + "\nSpawning new repairer: " + newName);
+          spawn.spawnCreep([WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE], newName, {
             memory: {
               role: "repairer"
             }
@@ -217,10 +241,10 @@ let targetsSt = undefined;
       // Check for pioneer flag
       if (!isEmpty(Game.flags) && Game.flags.pioneerFlag) {
         var pioneers = _.filter(Game.creeps, (creep) => creep.memory.role == "pioneer");
-        if (pioneers.length < 3) {
+        if (pioneers.length < 2) {
           newName = "Pioneer" + Game.time + spawn.room.name;
           console.log("Spawning new pioneer: " + newName);
-          spawn.spawnCreep([WORK, CARRY, MOVE, MOVE, WORK, CARRY, MOVE, MOVE, WORK, CARRY, MOVE, MOVE, WORK, CARRY, MOVE, MOVE, WORK, CARRY, MOVE, MOVE, WORK, CARRY, MOVE, MOVE, WORK, CARRY, MOVE, MOVE, WORK, CARRY, MOVE, MOVE, WORK, CARRY, MOVE, MOVE], newName, {
+          spawn.spawnCreep([MOVE, MOVE, WORK, CARRY, MOVE, MOVE, WORK, CARRY, MOVE, MOVE, WORK, CARRY, MOVE, MOVE, WORK, CARRY, MOVE, MOVE, WORK, CARRY, MOVE, MOVE, WORK, CARRY, MOVE, MOVE], newName, {
             memory: {
               role: "pioneer"
             }

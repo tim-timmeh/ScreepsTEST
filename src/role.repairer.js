@@ -22,13 +22,13 @@ var roleRepairer = {
           return (structure.structureType == STRUCTURE_TOWER) && structure.energy < structure.energyCapacity;
         }
       });
-      if (targetsT.length > 0) {
+      if (targetsT.length > 0 && !(creep.room.storage) || targetsT.length > 0 && (creep.room.storage && (creep.room.storage.store[RESOURCE_ENERGY] > 500))) {
         targetsT.sort((a, b) => a.energy - b.energy)
         if (creep.transfer(targetsT[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
           creep.moveToModule(targetsT[0]);
         }
       } else if (targetsRepair = creep.pos.findClosestByRange(FIND_STRUCTURES, {
-        filter: (hp) => hp.hits < (hp.hitsMax - 500) && hp.hits < 90000000
+        filter: (hp) => hp.hits < (hp.hitsMax - 500) && hp.hits < 200000
       })) {
         if (creep.repair(targetsRepair) == ERR_NOT_IN_RANGE) {
           creep.moveToModule(targetsRepair);
