@@ -11,8 +11,11 @@ MissionMiner.prototype.constructor = MissionMiner; // reset constructor to opera
 
 MissionMiner.prototype.init = function () { // Initialize / build objects required
   this.distanceToSpawn = this.findDistanceToSpawn(this.source.pos)
-  this.storage = this.findStorage(this.source.pos)//find storage for room,
-  this.container = this.findMinerContainer(this.source)
+  this.storage = this.findStorage(this.source.pos)//find closest storage for room,
+  this.container = this.source.findStructureNearby(STRUCTURE_CONTAINER, 1) // find container
+  if (!this.container){
+    this.placeMinerContainer()
+  }
 };
 
 MissionMiner.prototype.rolecall = function () { // perform rolecall on required creeps spawn if needed
@@ -30,4 +33,9 @@ MissionMiner.prototype.finalize = function () { // finalize?
 MissionMiner.prototype.findMinerContainer = function (source) {
   let container = source.pos.findInRange(LOOK_STRUCTURES,1);
   if (container) return container;
+}
+
+MissionMiner.prototype.placeMinerContainer = function () {
+  if (this.room.controller && this.room.controller.my && this.room.controller.level == 1) return;
+
 }

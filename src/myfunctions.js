@@ -43,6 +43,12 @@ module.exports = {
       console.log(`${description} @ ${__file} : ${__line}\n${e.stack}`) // if error console log stack at error
     }
   },
+
+  getKeyByValue : function (object, value) {
+    return Object.keys(object).find(key => object[key] === value);
+  }
+
+
 };
 //   exportStats : function () { // Sets Memory.stats for populating screepspl.us graph
 //     // Reset stats object

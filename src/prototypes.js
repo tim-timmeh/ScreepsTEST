@@ -6,53 +6,51 @@ StructureSpawn.prototype.spawnTest = function() { // Test function
   console.log(this.name + ' spawnTest');
 };
 
-
-
-Object.defineProperty(OwnedStructure.prototype, "memory", { // Shortcut for Owned Structures Memory
+Object.defineProperty(Structure.prototype, "memory", { // Shortcut for Owned Structures Memory
   get: function() { // Returns memory, if undefined creates & returns empty obj
-    myFunc.ensureMemTreeObj(() => Memory.rooms[this.room.name].ownedStructures[this.id],`rooms[${this.room.name}].ownedStructures[${this.id}]`);
-    return Memory.rooms[this.room.name].ownedStructures[this.id] = Memory.rooms[this.room.name].ownedStructures[this.id] || {};
+    myFunc.ensureMemTreeObj(() => Memory.rooms[this.room.name].structures[this.structureType][this.id],`rooms[${this.room.name}].structures[this.structureType][${this.id}]`);
+    return Memory.rooms[this.room.name].structures[this.structureType][this.id] = Memory.rooms[this.room.name].structures[this.structureType][this.id] || {};
   },
   set: function(value) { // sets and returns the property
-    return _.set(Memory, `rooms[${this.room.name}].ownedStructures.${this.id}`, value);
+    return _.set(Memory, `rooms[${this.room.name}].structures[${this.structureType}].${this.id}`, value);
   },
   configurable: true,
   enumerable: false
 });
 
 Object.defineProperty(Source.prototype, 'memory', { // Shortcut for source memory
-    configurable: true,
-    get: function() {
-        if(_.isUndefined(Memory.rooms[this.room.name].sourceIds)) {
-            Memory.rooms[this.room.name].sourceIds = {};
-        }
-        if(!_.isObject(Memory.rooms[this.room.name].sourceIds)) {
-            return undefined;
-        }
-        return Memory.rooms[this.room.name].sourceIds[this.id] =
-                Memory.rooms[this.room.name].sourceIds[this.id] || {};
-    },
-    set: function(value) {
-        if(_.isUndefined(Memory.rooms[this.room.name].sourceIds)) {
-            Memory.mySourcesMemory = {};
-        }
-        if(!_.isObject(Memory.rooms[this.room.name].sourceIds)) {
-            throw new Error('Could not set source memory');
-        }
-        Memory.rooms[this.room.name].sourceIds[this.id] = value;
+  configurable: true,
+  get: function() {
+    if(_.isUndefined(Memory.rooms[this.room.name].sourceIds)) {
+      Memory.rooms[this.room.name].sourceIds = {};
     }
+    if(!_.isObject(Memory.rooms[this.room.name].sourceIds)) {
+      return undefined;
+    }
+    return Memory.rooms[this.room.name].sourceIds[this.id] =
+    Memory.rooms[this.room.name].sourceIds[this.id] || {};
+  },
+  set: function(value) {
+    if(_.isUndefined(Memory.rooms[this.room.name].sourceIds)) {
+      Memory.mySourcesMemory = {};
+    }
+    if(!_.isObject(Memory.rooms[this.room.name].sourceIds)) {
+      throw new Error('Could not set source memory');
+    }
+    Memory.rooms[this.room.name].sourceIds[this.id] = value;
+  }
 });
 
 /*Object.defineProperty(Source.prototype, 'memory', { // Shortcut for source.memory OLD
-  get: function(){ // Works as get and set as examples >       // console.log(Game.spawns.Spawn1.room.sources[0].memory.workers) // retrieves property
-    //if (!Memory.rooms[this.room.name].sourceIds[this.id]) Memory.rooms[this.room.name].sourceIds[this.id] = {}; // untested, create obj if undefined
-    return Memory.rooms[this.room.name].sourceIds[this.id]     // Game.spawns.Spawn1.room.sources[0].memory.testo = 'test'; // sets object/prop
-  },
-  set: function(newKey,newValue){ // Doesnt work. only 1 arg. set as in example above
-    Memory.rooms[this.room.name].sourceIds[this.id][newKey] = newValue;
-  },
-  enumerable: false,
-  configurable: true
+get: function(){ // Works as get and set as examples >       // console.log(Game.spawns.Spawn1.room.sources[0].memory.workers) // retrieves property
+//if (!Memory.rooms[this.room.name].sourceIds[this.id]) Memory.rooms[this.room.name].sourceIds[this.id] = {}; // untested, create obj if undefined
+return Memory.rooms[this.room.name].sourceIds[this.id]     // Game.spawns.Spawn1.room.sources[0].memory.testo = 'test'; // sets object/prop
+},
+set: function(newKey,newValue){ // Doesnt work. only 1 arg. set as in example above
+Memory.rooms[this.room.name].sourceIds[this.id][newKey] = newValue;
+},
+enumerable: false,
+configurable: true
 });
 */
 
@@ -103,3 +101,31 @@ Creep.prototype.moveToModule = function(destination, ignore = true, ticks = 2) {
     visualizePathStyle: {stroke: '#fff'},
   });
 };
+
+RoomObject.prototype.findStructureNearby = function(structureType, range) { // search for structuretype near this object ie container / link
+  //if (!this.room.memory.structures[structureType]) this.room.memory.structures[structureType] = {};
+  _.defaultsDeep(this.room.memory,{'structures':{[structureType]:{}}})
+  let structureId = getKeyByValue(this.room.memory.structures[structureType], this.id);
+  if (structureId) {
+    let structure = Game.getObjectById(structureId);
+    if (structure) {
+      return structure //return object ie Container / Link
+    } else {
+      delete this.room.memory.structures[structureType][structureId]
+      //this.room.memory.structures[structureType][structureID] = undefined;
+      if (global.debug) console.log(`Structure not valid, erasing from memory ${structureId} @ ${this.room.name} for ${this.id}`)
+    }
+  }
+  if ((Game.time % 2 == 0) && (Math.random() < .2)) { // Every 2 ticks, 20% chance to go (1/10 ticks)
+    console.log(`Searching for ${structureType} in range at ${this.room.name} of ${this.id}`);
+    let structures = _.filter(this.pos.findInRange(FIND_STRUCTURES, range), (s) => {
+      return s.structureType == structureType;
+    });
+    if (structures.length > 0) {
+      console.log(`Found ${structures[0].id}`)
+      this.room.memory.structures[structureType][structures[0].id] = this.id;
+      return structures[0]
+    }
+    console.log('Could not find...');
+  }
+}

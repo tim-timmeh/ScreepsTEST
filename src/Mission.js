@@ -64,14 +64,14 @@ Mission.prototype.creepRoleCall = function (roleName, creepBody, creepAmount = 1
 };
 
 /**
- * [Takes creep body and multiplies by max energy available, with options. Returns creep body array for spawning]
- * @param  {Object} bodyConfig   [Object containing bodypart as Key and amount as Value eg {move:3,attack:2}]
- * @param  {Object} [options={}] [maxRatio = max block multiplier
- *                                maxEnergyPercent = max spawn ratio eg ration energy use % below max
- *                                forceSpawn = spawn at available energy or 300
- *                                keepFormat = duplicates body structure instead of making it even]
- * @return {[Array]}              [Returns body ready for spawning]
- */
+* [Takes creep body and multiplies by max energy available, with options. Returns creep body array for spawning]
+* @param  {Object} bodyConfig   [Object containing bodypart as Key and amount as Value eg {move:3,attack:2}]
+* @param  {Object} [options={}] [maxRatio = max block multiplier
+*                                maxEnergyPercent = max spawn ratio eg ration energy use % below max
+*                                forceSpawn = spawn at available energy or 300
+*                                keepFormat = duplicates body structure instead of making it even]
+* @return {[Array]}              [Returns body ready for spawning]
+*/
 Mission.prototype.getBody = function (bodyConfig, options = {}) { //, ,
   let blockEnergyReq = 0
   let blockPartsReq = 0;
@@ -105,21 +105,37 @@ Mission.prototype.findDistanceToSpawn = function (destination) { // pass a room 
   return this.memory.distanceToSpawn
 }
 
-Mission.prototype.findStorage = function (position) { // pass a room position and find closest storage
+Mission.prototype.findStorage = function (position) { // pass a room position and return closest storage object
   let storage
-  if (this.memory.storageID) {
+  if (this.room.storage && this.room.storage.my) { //if no mem find storage in room
+    //this.memory.storageID = this.room.storage.id;
+    storage = this.room.storage;
+    return storage
+  }
+  if (this.memory.storageID) { // if storage in memory
     storage = Game.getObjectById(this.memory.storageID);
-    if (storage && storage.room.controller.level >=4) return storage
-  } else if (this.room.storage && this.room.storage.my) {
-    return storage = this.memory.storageID = this.room.storage.id // find closest ? // REDO THIS SECTION RETURNING ID INSTEAD OF STORAGE OBJECT
-  } else if (this.spawnGroup.room.storage.id){
-    return storage = this.memory.storageID = this.spawnGroup.room.storage.id// REDO THIS SECTION RETURNING ID INSTEAD OF STORAGE OBJECT
-  } else {
-    let storages = _.filter(this.empire.storages, (storage) => storage.room.controller.level >= 4);
+    if (storage && storage.room.controller.level >=4) { //check still true
+      return storage
+    }
+    if (global.debug) console.log(`Error finding storage from memory, clearing - ${this.room} - ${this.opName} - ${this.name}`);
+    this.memory.storageID = ""; //else reset memory
+  }
+
+  if (this.spawnGroup.room.storage && this.spawnGroup.room.storage.my){ //if none in room find spawngroup room storage
+    this.memory.storageID = this.spawnGroup.room.storage.id;
+    if (global.debug) console.log(`Using spawnGroup Storage @ ${this.spawnGroup.room.name} for ${this.room} - ${this.opName} - ${this.name}`)
+    return storage
+  }
+   // ADD KING STORAGES?
+  try {
+    let storages = _.filter(this.king.storages, (storage) => storage.room.controller.level >= 4); // if none in spawngroup search all storage
     if (storages.length == 0) return;
-    if (storages.length == 1) return storages;
-    let sorted = _.sortBy(storages, (s) => Game.map.findPathTo(s.pos.roomName, position).length); // VERY EXPENSIVE?
+    if (storages.length == 1) return storages; // if only 1 return that one, (add check for distance by room maybe?)
+    let sorted = _.sortBy(storages, (s) => Game.map.findPathTo(s.pos.roomName, position).length); // else find closest. VERY EXPENSIVE? refactor better solution
+    if (global.debug) console.log(`Error finding storage, Searching all & finding closest - ${this.room} - ${this.opName} - ${this.name}\nFound ${sorted[0]}`);
     return sorted[0];
+  } catch (e) {
+    console.log(`FORGOT TO ADD KING.STORAGES @ ${__file} : ${__line}\n${e.stack}`) // if error console log stack at error
   }
 }
 
