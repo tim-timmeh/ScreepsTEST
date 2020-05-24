@@ -120,12 +120,17 @@ Mission.prototype.findStorage = function (position) { // pass a room position an
     if (global.debug) console.log(`Error finding storage from memory, clearing - ${this.room} - ${this.opName} - ${this.name}`);
     this.memory.storageID = ""; //else reset memory
   }
+  if (this.room.controller.my) { // added this part, dont want miners to take energy from room when bootstrapping?
+    if (global.debug) console.log(`Error finding storage, room looks to be in construction - ${this.room} - ${this.opName} - ${this.name}`)
+    return
+  }
 
   if (this.spawnGroup.room.storage && this.spawnGroup.room.storage.my){ //if none in room find spawngroup room storage
     this.memory.storageID = this.spawnGroup.room.storage.id;
     if (global.debug) console.log(`Using spawnGroup Storage @ ${this.spawnGroup.room.name} for ${this.room} - ${this.opName} - ${this.name}`)
     return storage
   }
+
    // ADD KING STORAGES?
   try {
     let storages = _.filter(this.king.storages, (storage) => storage.room.controller.level >= 4); // if none in spawngroup search all storage
