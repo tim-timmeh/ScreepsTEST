@@ -1,9 +1,12 @@
 'use strict'
 require('mission');
 
+//** Set miner to check and spawn 2 miners and deposit into containers if (<= rcl2 || maxenergy < 800) move:1,work:2,carry:1 {forcespawn}
+
 function MissionMiner(operation, name, source) { // constructor, how to build the object
   Mission.call(operation,name)
-  this.source = source
+  this.source = source;
+  this.memory.minerBootstrapTimer = this.memory.minerBootstrapTimer || 0; // memory to check for bootstrapping
 }
 
 MissionMiner.prototype = Object.create(Mission.prototype); // makes operationbase protos copy of operation protos
@@ -16,10 +19,15 @@ MissionMiner.prototype.init = function () { // Initialize / build objects requir
   if (!this.container){
     this.placeMinerContainer()
   }
+  this.needsEnergyHauler = this.storage != undefined;
+  if (this.needsEnergyHauler) {
+    this.runHaulerAnalysis();
+  }
 };
 
 MissionMiner.prototype.rolecall = function () { // perform rolecall on required creeps spawn if needed
-  this.miners = this.creepRoleCall('miner', this.getBody({work:5, carry:1, move:3},{maxRatio: 1}));
+  this.miners = this.creepRoleCall('miner', this.getBody({work: 2, move: 1},{maxRatio: 3, addBodyPart: {carry: 1}}));
+  this.minerBootstrap() // checks for miners, if 300 ticks without will spawn emergency miner.
 };
 
 MissionMiner.prototype.action = function () { // perform actions / missions
@@ -36,7 +44,7 @@ if (container) return container;
 }*/
 
 MissionMiner.prototype.placeMinerContainer = function () {
-  //if (this.room.controller && this.room.controller.my && this.room.controller.level == 1) return; // why not create container at level 1?
+  if (this.room.controller && this.room.controller.my && this.room.controller.level <= 2) return; // why not create container at level 1?
   let startingObject = this.storage
   if (!startingObject) {
     startingObject = this.room.find(FIND_MY_SPAWNS)[0];
@@ -68,4 +76,27 @@ MissionMiner.prototype.placeMinerContainer = function () {
   let position = ret.path[0];
   console.log(`Miner: Placing container in ${this.room} - ${this.opName} - ${this.name}`);
   position.createConstructionSite(STRUCTURE_CONTAINER);
+}
+
+MissionMiner.prototype.minerBootstrap = function (){
+  if (!this.miners) {
+    if (global.debug) console.log(`No miners found, tick ${this.memory.minerBootstrapTimer} - ${this.opName} - ${this.room} - ${this.name}`);
+    this.memory.minerBootstrapTimer += 1;
+    if (this.memory.minerBootstrapTimer >= 300) {
+      console.log(`No miners found, bootstrapping operation! - ${this.opName} - ${this.room} - ${this.name}`);
+      this.miners = this.creepRoleCall('miner', this.getBody({work: 2, move: 1},{forceSpawn: true, maxRatio: 3, addBodyPart: {carry: 1}}))
+    }
+  } else {
+    this.memory.minerBootstrapTimer = 0;
+  }
+}
+
+MissionMiner.prototype.runHaulerAnalysis = function () {
+  if (!this.memory.distanceToStorage) {
+    let path = PathFinder.search(this.storage.pos, {pos: this.source.pos, range: 1}).path;
+    this.memory.distanceToStorage = path.length;
+  }
+  let distance = this.memory.distanceToStorage;
+  let regen = Math.max(this.source.energyCapacity, SOURCE_ENERGY_CAPACITY) / ENERGY_REGEN_TIME;
+  this.haulerAnalysis = this.analyzeHauler(distance, regen);
 }
