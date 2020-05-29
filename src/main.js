@@ -47,12 +47,12 @@ module.exports.loop = function () {
     ** Miners to place/build container and add id to memory. (Needs work part)
     ** Upgrader if storage.rangeTo(Upgrader) > 4 then Build Link (Or spawn with MOVE/CARRY parts? untill link?)
     ** Haulers to build Roads
-     * while above ~50% storage spawn super || multiple upgraders?
-     * find resource(not in mem), add to mem, if hauler.xy close to mem.xy & !carryCapacity, pickup, continue
-     * breakup main into different modules (spawner etc)
-     * Optimise vars to .deserialize from memory if possible, if not do find then .serialize to memory.
-     * .serializePath && .deserializePath - if memory false -> Do findClosestByPath -> serialize to memory ->
-                                            creep.move via memory -> at error || end = clear memory
+    * while above ~50% storage spawn super || multiple upgraders?
+    * find resource(not in mem), add to mem, if hauler.xy close to mem.xy & !carryCapacity, pickup, continue
+    * breakup main into different modules (spawner etc)
+    * Optimise vars to .deserialize from memory if possible, if not do find then .serialize to memory.
+    * .serializePath && .deserializePath - if memory false -> Do findClosestByPath -> serialize to memory ->
+    creep.move via memory -> at error || end = clear memory
     */
 
     // Clear memory of old creeps.
@@ -62,7 +62,7 @@ module.exports.loop = function () {
         console.log("Clearing non-existing creep memory: ", name);
       }
     }
-let targetsSt = undefined;
+    let targetsSt = undefined;
     // Multi room - run code on each room
     for (var spawnName in Game.spawns) {
       var spawn = Game.spawns[spawnName];
@@ -101,18 +101,31 @@ let targetsSt = undefined;
         });
 
       } else if ((enemyspotted = spawn.room.find(FIND_HOSTILE_CREEPS)).length > 0 && defender.length < 1){
-          console.log('ENEMYS FOUND' + enemyspotted.length);
+        console.log('ENEMYS FOUND' + enemyspotted.length);
+        if (enemyspotted[0].owner.username != 'Invader' || spawn.room.controller.level <= 2 || enemyspotted.length >=2) {
 
-          newName = "Defender" + Game.time + spawn.room.name;
-          console.log("Spawning new Defender: " + newName);
-          spawn.spawnCreep([MOVE, MOVE, ATTACK, ATTACK, MOVE, MOVE, ATTACK, ATTACK], newName, {
-          //spawn.spawnCreep([MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, MOVE, MOVE, HEAL], newName, {
-            memory: {
-              role: "defender"
-            }
-          });
-
-
+          if (spawn.room.controller.level == 1) {
+            console.log('Requires Defender!');
+            newName = "Defender" + Game.time + spawn.room.name;
+            console.log("Spawning new Defender: " + newName);
+            spawn.spawnCreep([MOVE, ATTACK, MOVE, ATTACK], newName, {
+              //spawn.spawnCreep([MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, MOVE, MOVE, HEAL], newName, {
+              memory: {
+                role: "defender"
+              }
+            });
+          } else {
+            console.log('Requires Defender!');
+            newName = "Defender" + Game.time + spawn.room.name;
+            console.log("Spawning new Defender: " + newName);
+            spawn.spawnCreep([MOVE, MOVE, ATTACK, ATTACK, MOVE, MOVE, ATTACK, ATTACK], newName, {
+              //spawn.spawnCreep([MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, MOVE, MOVE, HEAL], newName, {
+              memory: {
+                role: "defender"
+              }
+            });
+          }
+        }
 
       } else if (spawn.room.energyCapacityAvailable > 800 && (miners.length < 1 || !(isEmpty(targetsSt = spawn.room.find(FIND_MY_STRUCTURES, {
         filter: (s) => {
@@ -259,7 +272,7 @@ let targetsSt = undefined;
           newName = "Attacker" + Game.time + spawn.room.name;
           console.log("Spawning new attacker: " + newName);
           spawn.spawnCreep([MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, MOVE, MOVE, HEAL], newName, {
-          //spawn.spawnCreep([MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, MOVE, MOVE, HEAL], newName, {
+            //spawn.spawnCreep([MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, MOVE, MOVE, HEAL], newName, {
             memory: {
               role: "attacker"
             }
@@ -275,8 +288,8 @@ let targetsSt = undefined;
           console.log("Spawning new Tank: " + newName);
           //spawn.spawnCreep([MOVE], newName, {
           spawn.spawnCreep([MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, MOVE, MOVE, HEAL], newName, {
-          //spawn.spawnCreep([MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, MOVE, MOVE, HEAL], newName, {
-          //spawn.spawnCreep([TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, ATTACK], newName, {
+            //spawn.spawnCreep([MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, MOVE, MOVE, HEAL], newName, {
+            //spawn.spawnCreep([TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, ATTACK], newName, {
             memory: {
               role: "tank"
             }
@@ -291,8 +304,8 @@ let targetsSt = undefined;
           console.log("Spawning new Defender: " + newName);
           //spawn.spawnCreep([MOVE], newName, {
           spawn.spawnCreep([MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, MOVE, MOVE, HEAL], newName, {
-          //spawn.spawnCreep([MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, MOVE, MOVE, HEAL], newName, {
-          //spawn.spawnCreep([TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, ATTACK], newName, {
+            //spawn.spawnCreep([MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, MOVE, MOVE, HEAL], newName, {
+            //spawn.spawnCreep([TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, ATTACK], newName, {
             memory: {
               role: "defender"
             }
@@ -322,68 +335,68 @@ let targetsSt = undefined;
             align: "left",
             opacity: 0.8
           });
+        }
       }
-    }
 
-    // Creep AI
-    for (var name in Game.creeps) {
-      var creep = Game.creeps[name];
-      var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
-      if (creep.memory.role == "butler") {
-        roleButler.run(creep);
-        continue;
+      // Creep AI
+      for (var name in Game.creeps) {
+        var creep = Game.creeps[name];
+        var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
+        if (creep.memory.role == "butler") {
+          roleButler.run(creep);
+          continue;
+        }
+        if (creep.memory.role == "upgrader") {
+          roleUpgrader.run(creep);
+          continue;
+        }
+        if (creep.memory.role == "builder") {
+          roleBuilder.run(creep);
+          continue;
+        }
+        if (creep.memory.role == "repairer") {
+          roleRepairer.run(creep);
+          continue;
+        }
+        if (creep.memory.role == "miner") {
+          roleMiner.run(creep);
+          continue;
+        }
+        if (creep.memory.role == "hauler") {
+          roleHauler.run(creep);
+          continue;
+        }
+        if (creep.memory.role == "claimer") {
+          roleClaimer.run(creep);
+          continue;
+        }
+        if (creep.memory.role == "pioneer") {
+          rolePioneer.run(creep);
+          continue;
+        }
+        if (creep.memory.role == "attacker") {
+          roleAttacker.run(creep);
+          continue;
+        }
+        if (creep.memory.role == "tank") {
+          roleTank.run(creep);
+          continue;
+        }
+        if (creep.memory.role == "defender") {
+          roleDefender.run(creep);
+          continue;
+        }
+        if (creep.memory.role == "healer") {
+          roleHealer.run(creep);
+          continue;
+        }
       }
-      if (creep.memory.role == "upgrader") {
-        roleUpgrader.run(creep);
-        continue;
-      }
-      if (creep.memory.role == "builder") {
-        roleBuilder.run(creep);
-        continue;
-      }
-      if (creep.memory.role == "repairer") {
-        roleRepairer.run(creep);
-        continue;
-      }
-      if (creep.memory.role == "miner") {
-        roleMiner.run(creep);
-        continue;
-      }
-      if (creep.memory.role == "hauler") {
-        roleHauler.run(creep);
-        continue;
-      }
-      if (creep.memory.role == "claimer") {
-        roleClaimer.run(creep);
-        continue;
-      }
-      if (creep.memory.role == "pioneer") {
-        rolePioneer.run(creep);
-        continue;
-      }
-      if (creep.memory.role == "attacker") {
-        roleAttacker.run(creep);
-        continue;
-      }
-      if (creep.memory.role == "tank") {
-        roleTank.run(creep);
-        continue;
-      }
-      if (creep.memory.role == "defender") {
-        roleDefender.run(creep);
-        continue;
-      }
-      if (creep.memory.role == "healer") {
-        roleHealer.run(creep);
-        continue;
-      }
-    }
 
-    // Tower AI
-    var towers = _.filter(Game.structures, s => s.structureType == STRUCTURE_TOWER);
-    for (var tower of towers) {
-      roleTower.run(tower);
-    }
-    exportStats(globalResetTick)
-  });
-};
+      // Tower AI
+      var towers = _.filter(Game.structures, s => s.structureType == STRUCTURE_TOWER);
+      for (var tower of towers) {
+        roleTower.run(tower);
+      }
+      exportStats(globalResetTick)
+    });
+  };
