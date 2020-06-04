@@ -26,7 +26,7 @@ Mission.prototype.rolecall = function () { // perform rolecall on required creep
 Mission.prototype.action = function () { // perform actions / missions
 
 };
-Mission.prototype.finalize = function () { // finalize?
+Mission.prototype.finalize = function () { // finalize? Invalidate Cache's/Re-calculate stuff (eg, hauler transports requried, may have gained GCL and benefit from analyzeHauler re-calc)
 
 };
 
@@ -88,9 +88,8 @@ Mission.prototype.getBody = function (bodyConfig, options = {}) { //, ,
   //   blockEnergyReq += BODYPART_COST[bodyPart.toLowerCase()] * bodyConfig[bodyPart];
   //   blockPartsReq += bodyConfig[bodyPart];
   // }
+  let blockMultiplier = this.bodyBlockCalc(bodyConfig, options);
 
-  let { blockEnergyReq, blockPartsReq } = this.bodyBlockReq(bodyConfig);
-  let { blockEnergyReq:blockEnergyReqExtra, blockPartsReq:blockPartsReqExtra } = this.bodyBlockReq(options.addBodyPart); //var { name: nameA } = { name: "Bender" }; console.log(nameA) == "Bender"
   // if (options.addBodyPart) { // Non multiplying body part calculation
   //   for (let bodyPart in options.addBodyPart) { // bodypart = object key
   //     blockEnergyReqExtra += BODYPART_COST[bodyPart.toLowerCase()] * options.addBodyPart[bodyPart];
@@ -98,9 +97,6 @@ Mission.prototype.getBody = function (bodyConfig, options = {}) { //, ,
   //   }
   // }
 
-  let blockLimit = options.maxRatio ? options.maxRatio : Math.floor((50 - blockPartsReqExtra) / blockPartsReq); //Work out max bodypart ratio - addBodyPart
-  let energyPool = options.forceSpawn ? Math.max(this.spawnGroup.currentSpawnEnergy, 300) : this.spawnGroup.maxSpawnEnergy; // if forceSpawn true then spawn with current energy or 300(incase total creep death?)
-  let blockMultiplier = Math.min(Math.floor((energyPool - blockEnergyReqExtra) * (options.maxEnergyPercent / 100 || 1) / blockEnergyReq), blockLimit); // works out available block multipler (maxratio vs max energy available), minus addBodyPart
 
   let creepBody = []
   if (options.keepFormat) { //To keep format eg [WORK, CARRY, MOVE, WORK, CARRY, MOVE]
@@ -129,9 +125,21 @@ Mission.prototype.getBody = function (bodyConfig, options = {}) { //, ,
   return creepBody
 }
 
+Mission.prototype.bodyBlockCalc = function (bodyConfig, options = {}) {
+  let { blockEnergyReq, blockPartsReq } = this.bodyBlockReq(bodyConfig);
+  let blockEnergyReqExtra = 0, blockPartsReqExtra = 0;
+  //let blockPartsReqExtra = 0;
+  if (options.addBodyPart) {
+    ({ blockEnergyReq:blockEnergyReqExtra, blockPartsReq:blockPartsReqExtra } = this.bodyBlockReq(options.addBodyPart)); //var { name: nameA } = { name: "Bender" }; console.log(nameA) == "Bender"
+  }
+  let blockLimit = options.maxRatio ? options.maxRatio : Math.floor((50 - blockPartsReqExtra) / blockPartsReq); //Work out max bodypart ratio - addBodyPart
+  let energyPool = options.forceSpawn ? Math.max(this.spawnGroup.currentSpawnEnergy, 300) : this.spawnGroup.maxSpawnEnergy; // if forceSpawn true then spawn with current energy or 300(incase total creep death?)
+  return Math.min(Math.floor((energyPool - blockEnergyReqExtra) * (options.maxEnergyPercent / 100 || 1) / blockEnergyReq), blockLimit); // works out available block multipler (maxratio vs max energy available), minus addBodyPart
+}
+
 Mission.prototype.bodyBlockReq = function (bodyConfig) { // return object {blockEnergyReq:0,blockPartsReq:0}
-  let blockEnergyReq
-  let blockPartsReq
+  let blockEnergyReq = 0
+  let blockPartsReq = 0
   for (let bodyPart in bodyConfig) { // bodypart = object key
     blockEnergyReq += BODYPART_COST[bodyPart.toLowerCase()] * bodyConfig[bodyPart];
     blockPartsReq += bodyConfig[bodyPart];
@@ -188,42 +196,45 @@ Mission.prototype.findStorage = function (position) { // pass a room position an
 Mission.prototype.analyzeHauler = function (distance, regen){
   if (!this.memory.haulerAnalysis || regen !== this.memory.haulerAnalysis.regen) {
     // distance to travel * there and back (and a little extra) * regen per tick
-    let totalTickRegen = distance * 2.1 * load ;
-    // creepBlock capacity = 100 (2 CARRY, 1 MOVE)
-    let creepBlocksNeeded = Math.ceil(totalTickRegen / 100);
-    let maxUnitsPossible = this.spawnGroup.maxUnits([CARRY, CARRY, MOVE]);
-    let cartsNeeded = Math.ceil(cargoUnitsNeeded / maxUnitsPossible );
-    let cargoUnitsPerCart = Math.ceil(cargoUnitsNeeded / cartsNeeded);
-    let body = this.workerBody(0, cargoUnitsPerCart * 2, cargoUnitsPerCart);
-    this.memory.transportAnalysis = {
-      load: load,
-      distance: distance,
-      body: body,
-      cartsNeeded: cartsNeeded,
-      carryCount: cargoUnitsPerCart * 2 };
-    }
-    return this.memory.transportAnalysis;
+    let totalTickRegen = distance * 2.1 * regen ;
+    let bodyConfig = {carry: 2 , move: 1 };
+    let creepBlockCapacity = 100 //(2 CARRY, 1 MOVE)
+    let creepBlocksNeeded = Math.ceil(totalTickRegen / creepBlockCapacity);
+    let maxBlocksPossible = this.bodyBlockCalc(bodyConfig);
+    //let maxUnitsPossible = Math.min(Math.floor(this.spawnGroup.maxSpawnEnergy / blockEnergyReq) ,Math.floor(50 / blockPartsReq));
+    let haulersNeeded = Math.ceil(creepBlocksNeeded / maxBlocksPossible );
+    let haulBlocksPerHauler = Math.ceil(creepBlocksNeeded / haulersNeeded);
+    let body = this.getBody(bodyConfig, {maxRatio: haulBlocksPerHauler }) //0, haulBlocksPerHauler * 2, haulBlocksPerHauler);
+    this.memory.haulerAnalysis = {
+      regen: regen, // regen per tick
+      distance: distance, // distance storage -> source
+      body: body, // Body required per hauler
+      haulersNeeded: haulersNeeded, // How many haulers
+      carryCount: haulBlocksPerHauler * bodyConfig.carry // How many carry Parts total
+    };
   }
+  return this.memory.haulerAnalysis;
+}
 
-  // Mission.prototype.getBodyWorker = function (work, carry, move, options = {} ) {//maxRatio, maxEnergyPercent, forceSpawn keepFormat) { // Ratio of work/carry/move parts, max spawn ratio eg, ration energy use % below max
-  //   let blockEnergyReq = work * 100 + carry * 50 + move * 50; // get energy per creep block
-  //   let blockPartsReq = work + carry + move; // get amount of parts per creep block
-  //   let blockLimit = options.maxRatio ? blockPartsReq * options.maxRatio : Math.floor(50 / blockPartsReq); // max amount of blocks for creep
-  //   let energyPool = options.forceSpawn ? Math.max(this.spawnGroup.currentSpawnEnergy, 300) : this.spawnGroup.maxSpawnEnergy; // if forceSpawn true then spawn with current energy or 300(incase total creep death?)
-  //   let blockMultiplier = Math.min(Math.floor(energyPool * (options.maxEnergyPercent / 100 || 1) / blockEnergyReq), blockLimit); // block multipler
-  //   let creepBody = [];
-  //   for (let i = 0; i < work * blockMultiplier; i++){
-  //     creepBody.push(WORK);
-  //   }
-  //   for (let i = 0; i < carry * blockMultiplier; i++){
-  //     creepBody.push(CARRY);
-  //   }
-  //   for (let i = 0; i < move * blockMultiplier; i++){
-  //     creepBody.push(MOVE);
-  //   }
-  //   return creepBody
-  // };
-  //
-  // Mission.prototype.getBodyFighter = function (){
-  //
-  // }
+// Mission.prototype.getBodyWorker = function (work, carry, move, options = {} ) {//maxRatio, maxEnergyPercent, forceSpawn keepFormat) { // Ratio of work/carry/move parts, max spawn ratio eg, ration energy use % below max
+//   let blockEnergyReq = work * 100 + carry * 50 + move * 50; // get energy per creep block
+//   let blockPartsReq = work + carry + move; // get amount of parts per creep block
+//   let blockLimit = options.maxRatio ? blockPartsReq * options.maxRatio : Math.floor(50 / blockPartsReq); // max amount of blocks for creep
+//   let energyPool = options.forceSpawn ? Math.max(this.spawnGroup.currentSpawnEnergy, 300) : this.spawnGroup.maxSpawnEnergy; // if forceSpawn true then spawn with current energy or 300(incase total creep death?)
+//   let blockMultiplier = Math.min(Math.floor(energyPool * (options.maxEnergyPercent / 100 || 1) / blockEnergyReq), blockLimit); // block multipler
+//   let creepBody = [];
+//   for (let i = 0; i < work * blockMultiplier; i++){
+//     creepBody.push(WORK);
+//   }
+//   for (let i = 0; i < carry * blockMultiplier; i++){
+//     creepBody.push(CARRY);
+//   }
+//   for (let i = 0; i < move * blockMultiplier; i++){
+//     creepBody.push(MOVE);
+//   }
+//   return creepBody
+// };
+//
+// Mission.prototype.getBodyFighter = function (){
+//
+// }
