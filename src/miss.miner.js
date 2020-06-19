@@ -15,9 +15,9 @@ MissionMiner.prototype.constructor = MissionMiner; // reset constructor to opera
 MissionMiner.prototype.init = function () { // Initialize / build objects required
   this.distanceToSpawn = this.findDistanceToSpawn(this.source.pos)
   this.storage = this.findStorage(this.source.pos)//find closest storage for room,
-  this.container = this.source.findStructureNearby(STRUCTURE_CONTAINER, 1) // find container
+  this.container = this.source.findStructureNearby(STRUCTURE_CONTAINER, 1) // find container (add mem option?)
   if (!this.container){
-    this.placeMinerContainer()
+      this.placeMinerContainer()
   }
   this.needsEnergyHauler = this.storage != undefined;
   if (this.needsEnergyHauler) {
@@ -51,27 +51,29 @@ MissionMiner.prototype.placeMinerContainer = function () {
     if (!startingObject) return
   }
   if (this.source.pos.findInRange(FIND_CONSTRUCTION_SITES,1).length > 0) return;// NEEDS WORK use mem? like findStructureNearby proto?
-  let ret = PathFinder.search(
-    this.source.pos, [{pos: startingObject.pos, range: 1}], { // ?Might need to do -  [{pos: this.source.pos, range:1}]
-      swampCost: 2,
-      plainCost: 2,
-      roomCallback: function(roomName) {
-        let room = Game.rooms[roomName];
-        if (!room) return;
-        let costs = new PathFinder.CostMatrix;
-        room.find(FIND_STRUCTURES).forEach(function(struct) {
-          if (struct.structureType == STRUCTURE_ROAD) {
-            costs.set(struct.pos.x, struct.pos.y, 1);
-          } else if (struct.structureType != STRUCTURE_CONTAINER && (struct.structureType != STRUCTURE_RAMPART || !struct.my)) {
-            costs.set(struct.pos.x, struct.pos.y, 0xff);
-          }
-        });
-        return costs;
-      },
-    }
-  );
+  let ret = PathFinder.searchCustom(this.source.pos, startingObject.pos, 1) //? might need to switch ends?
+  // let ret = PathFinder.search(
+  //   this.source.pos, [{pos: startingObject.pos, range: 1}], { // ?Might need to do -  [{pos: this.source.pos, range:1}]
+  //     swampCost: 3,
+  //     plainCost: 2,
+  //     roomCallback: function(roomName) {
+  //       let room = Game.rooms[roomName];
+  //       if (!room) return;
+  //       let costs = new PathFinder.CostMatrix;
+  //       room.find(FIND_STRUCTURES).forEach(function(struct) {
+  //         if (struct.structureType == STRUCTURE_ROAD) {
+  //           costs.set(struct.pos.x, struct.pos.y, 1);
+  //         } else if (struct.structureType != STRUCTURE_CONTAINER && (struct.structureType != STRUCTURE_RAMPART || !struct.my)) {
+  //           costs.set(struct.pos.x, struct.pos.y, 0xff);
+  //         }
+  //       });
+  //       return costs;
+  //     },
+  //   }
+  // );
   if (ret.incomplete || ret.path.length == 0) {
     console.log(`Pathing for miner container placement failed - ${this.opName} - ${this.room} - ${this.name}`);
+    return;
   }
   let position = ret.path[0];
   console.log(`Miner: Placing container in ${this.room} - ${this.opName} - ${this.name}`);

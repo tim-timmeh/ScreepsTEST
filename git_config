@@ -1,5 +1,5 @@
 
-To change branches ensure .git/refs/heads includes branch file containing hash
+To change branches ensure .git/refs/heads includes branch file containing hash (can find hash in packed-refs doc in .git)
 and add .git/config branch name as below
 
 --------------------------------------------------------------------------
