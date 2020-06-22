@@ -58,7 +58,7 @@ Mission.prototype.creepRoleCall = function (roleName, creepBody, creepAmount = 1
     }
   }
   if (this.SpawnGroup.isAvailable && creepCount < creepAmount && this.hasVision) {
-    let creepName = this.opName.substring(9,12) + '.' + this.roleName.substring(0,3) + '.' + (Game.time % 100);
+    let creepName = this.opName.substring(9,12) + '.' + this.roleName.substring(0,3) + '.' + (Game.time % 100);//add spawngroup # to name
     if (this.SpawnGroup.spawn(creepBody, creepName, options.memory) == 0) {
       this.memory.spawn[roleName].push(creepName);
     }
@@ -214,6 +214,20 @@ Mission.prototype.analyzeHauler = function (distance, regen){
     };
   }
   return this.memory.haulerAnalysis;
+}
+
+Mission.prototype.paveRoad = function (startPos, dest, range) {
+  //needs short circuit
+  let path = PathFinder.searchCustom(startPos, dest, 2)
+  if (!path) console.log(`Aborting Paving Road Function from ${origin} to ${goal} - ${this.opName} - ${this.room.name} - ${this.name}`)
+
+}
+
+Mission.prototype.fixRoad = function (path) {
+
+  for (let position of path) {
+  // check for road / hp / construction.type road 
+  }
 }
 
 // Mission.prototype.getBodyWorker = function (work, carry, move, options = {} ) {//maxRatio, maxEnergyPercent, forceSpawn keepFormat) { // Ratio of work/carry/move parts, max spawn ratio eg, ration energy use % below max

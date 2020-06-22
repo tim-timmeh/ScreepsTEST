@@ -16,9 +16,14 @@ MissionMiner.prototype.init = function () { // Initialize / build objects requir
   this.distanceToSpawn = this.findDistanceToSpawn(this.source.pos)
   this.storage = this.findStorage(this.source.pos)//find closest storage for room,
   this.container = this.source.findStructureNearby(STRUCTURE_CONTAINER, 1) // find container (add mem option?)
-  if (!this.container){
-      this.placeMinerContainer()
+  // If no container, place one. Else Confirm Path from storage || Spawn
+  if (!this.container) {
+    this.placeMinerContainer()
+  } else {
+    let startPos = this.storage || this.room.find(FIND_MY_SPAWNS)[0];
+    startPos ? paveRoad(startPos, this.container, 2) : console.log(`Error in start position no storage or spawn - ${this.opName} - ${this.room.name} - ${this.name}`)
   }
+  //
   this.needsEnergyHauler = this.storage != undefined;
   if (this.needsEnergyHauler) {
     this.runHaulerAnalysis();
