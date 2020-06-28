@@ -31,6 +31,16 @@ Mission.prototype.finalize = function () { // finalize? Invalidate Cache's/Re-ca
 };
 
 // Additional methods/functions below
+
+/**
+ * [Role call creeps via mission.memory.spawn creep array, else spawn if needed]
+ * @param  {String} roleName        [Creeps role title]
+ * @param  {[creepBody]} creepBody        [Creep body to spawn, use this.getBody return to get dynamic size]
+ * @param  {Number} [creepAmount=1] [How many creeps for role]
+ * @param  {Object} [options={}]    [prespawn = ]
+ *                                  []
+ * @return {creep[]}                 [Array of Creeps matching roleName]
+ */
 Mission.prototype.creepRoleCall = function (roleName, creepBody, creepAmount = 1, options = {} ) { // what mission needs. job name, what kinda body, how many, additional options (Pre-spawn, priority reservation etc)
   let creepArray = [];
   if (!this.memory.spawn[roleName]) {
@@ -68,36 +78,17 @@ Mission.prototype.creepRoleCall = function (roleName, creepBody, creepAmount = 1
 
 /**
 * [Takes creep body and multiplies by max energy available, with options. Returns creep body array for spawning]
-* @param  {Object} bodyConfig   [Object containing bodypart as Key and amount as Value eg {move:3,attack:2}]
-* @param  {Object} [options={}] [maxRatio = max block multiplier
-*                                maxEnergyPercent = max spawn ratio eg ration energy use % below max
-*                                forceSpawn = spawn at available energy or 300
-*                                keepFormat = duplicates body structure instead of making it even]
-*                                addBodyPart = add non multiplying bodypart to bodyConfig
-*                                removeBodyPart = remove a body part (eg in haulers require 1-2 move/carry ratio but -1 carry for work)
-* @return {[Array]}              [Returns body ready for spawning]
+* @param  {{string:number}} bodyConfig   [Object containing bodypart as Key and amount as Value eg {move:3,attack:2}]
+* @param  {Object} [options={}] [maxRatio = max block multiplier]
+*                                [maxEnergyPercent = max spawn ratio eg ration energy use % below max]
+*                                [forceSpawn = spawn at available energy or 300]
+*                                [keepFormat = duplicates body structure instead of making it even]
+*                                [addBodyPart = add non multiplying bodypart to bodyConfig]
+*                                [removeBodyPart = remove a body part (eg in haulers require 1-2 move/carry ratio but -1 carry for work)]
+* @return {[creepBody]}              [Returns body ready for spawning]
 */
 Mission.prototype.getBody = function (bodyConfig, options = {}) { //, ,
-
-  // let blockEnergyReqExtra = 0;
-  // let blockPartsReqExtra = 0;
-  //  let blockEnergyReq = 0;
-  //  let blockPartsReq = 0;
-  //
-  // for (let bodyPart in bodyConfig) { // bodypart = object key
-  //   blockEnergyReq += BODYPART_COST[bodyPart.toLowerCase()] * bodyConfig[bodyPart];
-  //   blockPartsReq += bodyConfig[bodyPart];
-  // }
-  let blockMultiplier = this.bodyBlockCalc(bodyConfig, options);
-
-  // if (options.addBodyPart) { // Non multiplying body part calculation
-  //   for (let bodyPart in options.addBodyPart) { // bodypart = object key
-  //     blockEnergyReqExtra += BODYPART_COST[bodyPart.toLowerCase()] * options.addBodyPart[bodyPart];
-  //     blockPartsReqExtra += options.addBodyPart[bodyPart];
-  //   }
-  // }
-
-
+  let blockMultiplier = this.bodyBlockCalc(bodyConfig, options); // Calc max multiplier of bodyConfig
   let creepBody = []
   if (options.keepFormat) { //To keep format eg [WORK, CARRY, MOVE, WORK, CARRY, MOVE]
     for (let bodyPart in bodyConfig) {
@@ -125,11 +116,19 @@ Mission.prototype.getBody = function (bodyConfig, options = {}) { //, ,
   return creepBody
 }
 
+/**
+ * [Calc Max/Req creep body block multiplier]
+ * @param  {Object} bodyConfig   [Object containing bodypart as Key and amount as Value eg {move:3,attack:2}]
+ * @param  {Object} [options={}] [maxRatio = max block multiplier]
+ *                                [maxEnergyPercent = max spawn ratio eg ration energy use % below max]
+ *                                [forceSpawn = spawn at available energy or 300]
+ *                                [addBodyPart = add non multiplying bodypart to bodyConfig]
+ * @return {number}              [body blockMultiplier]
+ */
 Mission.prototype.bodyBlockCalc = function (bodyConfig, options = {}) {
   let { blockEnergyReq, blockPartsReq } = this.bodyBlockReq(bodyConfig);
   let blockEnergyReqExtra = 0, blockPartsReqExtra = 0;
-  //let blockPartsReqExtra = 0;
-  if (options.addBodyPart) {
+  if (options.addBodyPart) { // Run bodyBlockReq on extra part and re-assign to Extra vars
     ({ blockEnergyReq:blockEnergyReqExtra, blockPartsReq:blockPartsReqExtra } = this.bodyBlockReq(options.addBodyPart)); //var { name: nameA } = { name: "Bender" }; console.log(nameA) == "Bender"
   }
   let blockLimit = options.maxRatio ? options.maxRatio : Math.floor((50 - blockPartsReqExtra) / blockPartsReq); //Work out max bodypart ratio - addBodyPart
@@ -137,6 +136,11 @@ Mission.prototype.bodyBlockCalc = function (bodyConfig, options = {}) {
   return Math.min(Math.floor((energyPool - blockEnergyReqExtra) * (options.maxEnergyPercent / 100 || 1) / blockEnergyReq), blockLimit); // works out available block multipler (maxratio vs max energy available), minus addBodyPart
 }
 
+/**
+ * [Calc Energy cost & Parts count]
+ * @param  {Object} bodyConfig [Object containing bodypart as Key and amount as Value eg {move:3,attack:2}]
+ * @return {{blockEnergyReq : number, blockPartsReq : number}}            [description]
+ */
 Mission.prototype.bodyBlockReq = function (bodyConfig) { // return object {blockEnergyReq:0,blockPartsReq:0}
   let blockEnergyReq = 0
   let blockPartsReq = 0
@@ -147,6 +151,11 @@ Mission.prototype.bodyBlockReq = function (bodyConfig) { // return object {block
   return {blockEnergyReq:blockEnergyReq, blockPartsReq:blockPartsReq}
 }
 
+/**
+ * [Pass a room position and find distance to spawn group]
+ * @param  {roomPosition} destination [description]
+ * @return {number}             [description]
+ */
 Mission.prototype.findDistanceToSpawn = function (destination) { // pass a room position and find distance to spawn group
   if (!this.memory.distanceToSpawn) {
     this.memory.distanceToSpawn = this.room.findPath(this.spawnGroup.pos, destination, {ignoreCreeps : true}).length - 1; //generates path from spawn to source -1 because creep doesnt stand ontop of source
@@ -154,6 +163,11 @@ Mission.prototype.findDistanceToSpawn = function (destination) { // pass a room 
   return this.memory.distanceToSpawn
 }
 
+/**
+ * [Pass a room position and return closest storage object]
+ * @param  {roomPosition} position [description]
+ * @return {Object}          [description]
+ */
 Mission.prototype.findStorage = function (position) { // pass a room position and return closest storage object
   let storage
   if (this.room.storage && this.room.storage.my) { //if no mem find storage in room
@@ -193,6 +207,12 @@ Mission.prototype.findStorage = function (position) { // pass a room position an
   }
 }
 
+/**
+ * [Pass a distance and source regen/tick to calc dynamic hauler size and qty based on spawnGroup max Energy]
+ * @param  {number} distance [Distance from dropoff to pickup]
+ * @param  {number} regen    [How much energy regens per tick]
+ * @return {object}          [Return memory object containing regen, distance, body, haulersNeeded, carryCount]
+ */
 Mission.prototype.analyzeHauler = function (distance, regen){
   if (!this.memory.haulerAnalysis || regen !== this.memory.haulerAnalysis.regen) {
     // distance to travel * there and back (and a little extra) * regen per tick
@@ -216,17 +236,25 @@ Mission.prototype.analyzeHauler = function (distance, regen){
   return this.memory.haulerAnalysis;
 }
 
+/**
+ * [description]
+ * @param  {Object} startPos [description]
+ * @param  {Object} dest     [description]
+ * @param  {number} range    [description]
+ * @return {[type]}          [description]
+ */
 Mission.prototype.paveRoad = function (startPos, dest, range) {
   //needs short circuit
-  let path = PathFinder.searchCustom(startPos, dest, 2)
+  let path = PathFinder.searchCustom(startPos.pos, dest.pos, 2)
   if (!path) console.log(`Aborting Paving Road Function from ${origin} to ${goal} - ${this.opName} - ${this.room.name} - ${this.name}`)
-
+  let conSite = this.fixRoad(path)
 }
+
 
 Mission.prototype.fixRoad = function (path) {
 
   for (let position of path) {
-  // check for road / hp / construction.type road 
+  // check for road / hp / construction.type road
   }
 }
 
