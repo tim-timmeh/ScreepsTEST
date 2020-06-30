@@ -247,20 +247,26 @@ Mission.prototype.paveRoad = function (startPos, dest, range) {
   //needs short circuit
   let path = PathFinder.searchCustom(startPos.pos, dest.pos, 2)
   if (!path) console.log(`Aborting Paving Road Function from ${startPos} to ${dest} - ${this.opName} - ${this.room.name} - ${this.name}`)
-  let conSite = this.fixRoad(path)
+  let newConSites = this.fixRoad(path)
 }
 
 
 Mission.prototype.fixRoad = function (path) {
   let roadIds = [];
+  let newConSites = [];
   for (let position of path) {
     if (!Game.rooms[position.roomName]) return;
     let road = position.lookFor(LOOK_STRUCTURES).find(struct => struct.structureType = STRUCTURE_ROAD);
     if (road) {
       roadIds.push(road.id);
+      //
+      continue;
     }
-  // check for road / hp / construction.type road
+    let conSite = position.lookFor(LOOK_CONSTRUCTION_SITES).find(struct => struct.structureType = STRUCTURE_ROAD);
+    if (conSite) continue;
+    newConSites.push(position)
   }
+  return newConSites
 }
 
 // Mission.prototype.getBodyWorker = function (work, carry, move, options = {} ) {//maxRatio, maxEnergyPercent, forceSpawn keepFormat) { // Ratio of work/carry/move parts, max spawn ratio eg, ration energy use % below max
