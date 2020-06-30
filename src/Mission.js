@@ -246,14 +246,19 @@ Mission.prototype.analyzeHauler = function (distance, regen){
 Mission.prototype.paveRoad = function (startPos, dest, range) {
   //needs short circuit
   let path = PathFinder.searchCustom(startPos.pos, dest.pos, 2)
-  if (!path) console.log(`Aborting Paving Road Function from ${origin} to ${goal} - ${this.opName} - ${this.room.name} - ${this.name}`)
+  if (!path) console.log(`Aborting Paving Road Function from ${startPos} to ${dest} - ${this.opName} - ${this.room.name} - ${this.name}`)
   let conSite = this.fixRoad(path)
 }
 
 
 Mission.prototype.fixRoad = function (path) {
-
+  let roadIds = [];
   for (let position of path) {
+    if (!Game.rooms[position.roomName]) return;
+    let road = position.lookFor(LOOK_STRUCTURES).find(struct => struct.structureType = STRUCTURE_ROAD);
+    if (road) {
+      roadIds.push(road.id);
+    }
   // check for road / hp / construction.type road
   }
 }
