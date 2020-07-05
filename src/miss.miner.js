@@ -34,6 +34,7 @@ MissionMiner.prototype.init = function () { // Initialize / build objects requir
 MissionMiner.prototype.rolecall = function () { // perform rolecall on required creeps spawn if needed
   this.miners = this.creepRoleCall('miner', this.getBody({work: 2, move: 1},{maxRatio: 3, addBodyPart: {carry: 1}}));
   this.minerBootstrap() // checks for miners, if 300 ticks without will spawn emergency miner.
+  //if this.memory.roadRepairIds spawn paver
 };
 
 MissionMiner.prototype.action = function () { // perform actions / missions
