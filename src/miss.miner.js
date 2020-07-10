@@ -1,5 +1,7 @@
 'use strict'
-require('mission');
+const Mission = require('Mission');
+
+module.exports = {MissionMiner}
 
 //** Set miner to check and spawn 2 miners and deposit into containers if (<= rcl2 || maxenergy < 800) move:1,work:2,carry:1 {forcespawn}
 
@@ -21,7 +23,7 @@ MissionMiner.prototype.init = function () { // Initialize / build objects requir
     this.placeMinerContainer()
   } else {
     let startPos = this.storage || this.room.find(FIND_MY_SPAWNS)[0];
-    startPos ? paveRoad(startPos, this.container, 2) : console.log(`Error in start position no storage or spawn - ${this.opName} - ${this.room.name} - ${this.name}`)
+    startPos ? this.paveRoad(startPos, this.container, 2) : console.log(`Error in start position, no storage or spawn - ${this.opName} - ${this.room.name} - ${this.name}`)
   }
   //
   this.needsEnergyHauler = this.storage != undefined;
